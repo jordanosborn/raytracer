@@ -69,3 +69,14 @@ impl std::ops::Add for Vec3 {
         }
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_add() {
+        assert_eq!(2 + 2, 4);
+    }
+}
