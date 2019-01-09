@@ -1,5 +1,5 @@
-mod vector;
 mod args;
+mod vector;
 use self::vector::Vec3;
 
 fn main() {
