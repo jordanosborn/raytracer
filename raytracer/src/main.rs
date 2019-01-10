@@ -31,9 +31,8 @@ fn color(ray: &Ray, world: &HitableList) -> Vec3 {
 }
 
 fn main() {
-    let (nx_i, ny_i, output) = args::parse_args();
+    let (nx_i, ny_i, ns, output) = args::parse_args();
     let (nx, ny) = (nx_i as f64, ny_i as f64);
-    let ns = 100;
     let mut rng = rand::thread_rng();
     let mut output = OpenOptions::new()
         .read(true)
