@@ -3,6 +3,7 @@ mod camera;
 mod hitable;
 mod ray;
 mod vector;
+mod material;
 use self::camera::Camera;
 use self::hitable::{
     hitable_list::{HitableList, HITABLE},
