@@ -1,5 +1,12 @@
+#[derive(Debug, PartialEq)]
 pub struct Vec3 {
     pub data: [f64; 3],
+}
+
+impl std::fmt::Display for Vec3 {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "({}, {}, {})", self.data[0], self.data[1], self.data[2])
+    }
 }
 
 impl Vec3 {
@@ -219,6 +226,9 @@ mod tests {
 
     #[test]
     fn test_add() {
-        assert_eq!(2 + 2, 4);
+        let x = Vec3::new(1.0, 2.0, 3.0);
+        let y = Vec3::new(1.0, 2.0, 4.0);
+        let z = Vec3::new(2.0, 4.0, 7.0);
+        assert_eq!(x + y, z);
     }
 }
