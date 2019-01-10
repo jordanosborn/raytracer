@@ -1,16 +1,16 @@
-use super::{HitRecord, Hitable};
-use super::Vec3;
 use super::Ray;
+use super::Vec3;
+use super::{HitRecord, Hitable};
 
 #[derive(Copy, Clone)]
 pub struct Sphere {
     center: Vec3,
-    radius: f64
+    radius: f64,
 }
 
 impl Sphere {
     pub fn new(center: Vec3, radius: f64) -> Sphere {
-        Sphere {center, radius}
+        Sphere { center, radius }
     }
 }
 
@@ -31,9 +31,7 @@ impl Hitable for Sphere {
                     rec.normal = (rec.p - self.center) / self.radius;
                     true
                 }
-                _ => {
-                    false
-                }
+                _ => false,
             }
         } else {
             false

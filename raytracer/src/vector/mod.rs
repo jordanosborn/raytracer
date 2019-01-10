@@ -51,16 +51,9 @@ impl Vec3 {
 
     #[inline]
     pub fn unit_vector(v: &Vec3) -> Vec3 {
-        let length = (v.data[0] * v.data[0]
-            + v.data[1] * v.data[1]
-            + v.data[2] * v.data[2])
-            .sqrt();
+        let length = (v.data[0] * v.data[0] + v.data[1] * v.data[1] + v.data[2] * v.data[2]).sqrt();
         Vec3 {
-            data: [
-                v.data[0] / length,
-                v.data[1] / length,
-                v.data[2] / length,
-            ],
+            data: [v.data[0] / length, v.data[1] / length, v.data[2] / length],
         }
     }
 
@@ -82,11 +75,13 @@ impl Vec3 {
 
     #[inline]
     pub fn cross(v1: &Vec3, v2: &Vec3) -> Vec3 {
-        Vec3 {data: [
-            v1.data[1] * v2.data[2] - v1.data[2] * v2.data[1],
-            v1.data[2] * v2.data[0] - v1.data[0] * v2.data[2],
-            v1.data[0] * v2.data[1] - v1.data[1] * v2.data[0]
-        ]}
+        Vec3 {
+            data: [
+                v1.data[1] * v2.data[2] - v1.data[2] * v2.data[1],
+                v1.data[2] * v2.data[0] - v1.data[0] * v2.data[2],
+                v1.data[0] * v2.data[1] - v1.data[1] * v2.data[0],
+            ],
+        }
     }
 }
 
@@ -98,7 +93,6 @@ impl std::ops::Index<usize> for Vec3 {
         } else {
             panic!("Index invalid")
         }
-
     }
 }
 
@@ -109,10 +103,8 @@ impl std::ops::IndexMut<usize> for Vec3 {
         } else {
             panic!("Index invalid")
         }
-
     }
 }
-
 
 impl std::ops::Add for Vec3 {
     type Output = Vec3;
@@ -150,7 +142,7 @@ impl std::ops::Mul<Vec3> for f64 {
             data: [
                 self * other.data[0],
                 self * other.data[1],
-                self * other.data[2]
+                self * other.data[2],
             ],
         }
     }
@@ -164,7 +156,7 @@ impl std::ops::Mul<f64> for Vec3 {
             data: [
                 self.data[0] * other,
                 self.data[1] * other,
-                self.data[2] * other
+                self.data[2] * other,
             ],
         }
     }
@@ -175,12 +167,12 @@ impl std::ops::Mul<Vec3> for Vec3 {
     #[inline]
     fn mul(self, other: Vec3) -> Vec3 {
         Vec3 {
-                data: [
-                    self.data[0] * other.data[0],
-                    self.data[1] * other.data[1],
-                    self.data[2] * other.data[2]
-                ],
-            }
+            data: [
+                self.data[0] * other.data[0],
+                self.data[1] * other.data[1],
+                self.data[2] * other.data[2],
+            ],
+        }
     }
 }
 
@@ -193,7 +185,7 @@ impl std::ops::Div<f64> for Vec3 {
                 data: [
                     self.data[0] / other,
                     self.data[1] / other,
-                    self.data[2] / other
+                    self.data[2] / other,
                 ],
             }
         } else {
@@ -211,7 +203,7 @@ impl std::ops::Div<Vec3> for Vec3 {
                 data: [
                     self.data[0] / other.data[0],
                     self.data[1] / other.data[1],
-                    self.data[2] / other.data[2]
+                    self.data[2] / other.data[2],
                 ],
             }
         } else {
@@ -273,11 +265,8 @@ impl std::ops::DivAssign<Vec3> for Vec3 {
         } else {
             panic!("Can't divide by zero")
         }
-        
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

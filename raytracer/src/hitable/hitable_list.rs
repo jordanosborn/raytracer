@@ -1,21 +1,21 @@
-use super::{HitRecord, Hitable, sphere::Sphere};
-use super::{Ray};
+use super::Ray;
+use super::{sphere::Sphere, HitRecord, Hitable};
 
 #[derive(Copy, Clone)]
 pub enum HITABLE {
-    SPHERE(Sphere)
+    SPHERE(Sphere),
 }
 
 #[derive(Clone)]
 pub struct HitableList {
     length: usize,
-    list: Vec<HITABLE>
+    list: Vec<HITABLE>,
 }
 
 impl HitableList {
-    pub fn new(list: Vec<HITABLE>) -> HitableList{
+    pub fn new(list: Vec<HITABLE>) -> HitableList {
         let length = list.len();
-        HitableList {list, length}
+        HitableList { list, length }
     }
 }
 
@@ -39,5 +39,4 @@ impl Hitable for HitableList {
         }
         hit_anything
     }
-    
 }
