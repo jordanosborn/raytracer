@@ -19,11 +19,11 @@ impl Vec3 {
     }
     #[inline]
     pub fn y(&self) -> f64 {
-        self.data[0]
+        self.data[1]
     }
     #[inline]
     pub fn z(&self) -> f64 {
-        self.data[0]
+        self.data[2]
     }
     #[inline]
     pub fn r(&self) -> f64 {
@@ -31,11 +31,11 @@ impl Vec3 {
     }
     #[inline]
     pub fn g(&self) -> f64 {
-        self.data[0]
+        self.data[1]
     }
     #[inline]
     pub fn b(&self) -> f64 {
-        self.data[0]
+        self.data[2]
     }
 
     #[inline]
@@ -126,9 +126,9 @@ impl std::ops::Sub for Vec3 {
     fn sub(self, other: Vec3) -> Vec3 {
         Vec3 {
             data: [
-                self.data[0] + other.data[0],
-                self.data[1] + other.data[1],
-                self.data[2] + other.data[2],
+                self.data[0] - other.data[0],
+                self.data[1] - other.data[1],
+                self.data[2] - other.data[2],
             ],
         }
     }
@@ -239,8 +239,8 @@ impl std::ops::MulAssign<f64> for Vec3 {
 impl std::ops::MulAssign<Vec3> for Vec3 {
     fn mul_assign(&mut self, other: Vec3) {
         self.data[0] = self.data[0] * other.data[0];
-        self.data[1] = self.data[1] * other.data[0];
-        self.data[2] = self.data[2] * other.data[0];
+        self.data[1] = self.data[1] * other.data[1];
+        self.data[2] = self.data[2] * other.data[2];
     }
 }
 
@@ -260,8 +260,8 @@ impl std::ops::DivAssign<Vec3> for Vec3 {
     fn div_assign(&mut self, other: Vec3) {
         if other.data[0] != 0.0 && other.data[1] != 0.0 && other.data[2] != 0.0 {
             self.data[0] = self.data[0] / other.data[0];
-            self.data[1] = self.data[1] / other.data[0];
-            self.data[2] = self.data[2] / other.data[0];
+            self.data[1] = self.data[1] / other.data[1];
+            self.data[2] = self.data[2] / other.data[2];
         } else {
             panic!("Can't divide by zero")
         }
