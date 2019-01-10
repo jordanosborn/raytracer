@@ -14,6 +14,7 @@ use self::vector::Vec3;
 use rand::Rng;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
+use indicatif::ProgressBar;
 
 fn random_in_unit_sphere() -> Vec3{
     let mut rng = rand::thread_rng();
@@ -63,8 +64,9 @@ fn main() {
     if let Err(e) = output.write(format!("P3\n{} {}\n255\n", nx_i, ny_i).as_bytes()) {
         panic!("Oh no {}", e)
     }
-
+    let pb = ProgressBar::new((ny_i) as u64);
     for j in (0..(ny_i)).rev() {
+        // write to file in batches (pixel rows)
         for i in 0..nx_i {
             let mut col = Vec3::new(0.0, 0.0, 0.0);
             for _ in 0..ns {
@@ -86,6 +88,9 @@ fn main() {
             if let Err(e) = output.write(format!("{} {} {}\n", ir, ig, ib).as_bytes()) {
                 panic!("Oh no {}", e)
             }
+            
         }
+        pb.inc(1);
     }
+    pb.finish_with_message("Done");
 }
