@@ -2,15 +2,18 @@ mod args;
 mod hitable;
 mod ray;
 mod vector;
+mod camera;
 use self::hitable::{
     hitable_list::{HitableList, HITABLE},
     sphere::Sphere,
     HitRecord, Hitable,
 };
+use self::camera::Camera;
 use self::ray::Ray;
 use self::vector::Vec3;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
+use rand::Rng;
 
 fn color(ray: &Ray, world: &HitableList) -> Vec3 {
     let mut rec = HitRecord::new();
@@ -30,6 +33,8 @@ fn color(ray: &Ray, world: &HitableList) -> Vec3 {
 fn main() {
     let (nx_i, ny_i, output) = args::parse_args();
     let (nx, ny) = (nx_i as f64, ny_i as f64);
+    let ns = 100;
+    let mut rng = rand::thread_rng();
     let mut output = OpenOptions::new()
         .read(true)
         .write(true)
@@ -37,10 +42,7 @@ fn main() {
         .open(output)
         .unwrap();
 
-    let lower_left_corner = Vec3::new(-2.0, -1.0, -1.0);
-    let horizontal = Vec3::new(4.0, 0.0, 0.0);
-    let vertical = Vec3::new(0.0, 2.0, 0.0);
-    let origin = Vec3::new(0.0, 0.0, 0.0);
+    let camera = Camera::new();
 
     let world = HitableList::new(vec![
         HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)),
@@ -53,13 +55,16 @@ fn main() {
 
     for j in (0..(ny_i)).rev() {
         for i in 0..nx_i {
-            let u = (i as f64) / nx;
-            let v = (j as f64) / ny;
-            let r = Ray::new(
-                &origin,
-                &(lower_left_corner + u * horizontal + v * vertical).clone(),
-            );
-            let col = color(&r, &world);
+            let mut col = Vec3::new(0.0, 0.0, 0.0);
+            for _ in 0..ns {
+                let (rand1, rand2): (f64, f64) = (rng.gen(), rng.gen());
+                let u: f64 = (i as f64 + rand1) / nx;
+                let v: f64 = (j as f64 + rand2) / ny;
+                let r = camera.get_ray(u, v);
+                col += color(&r, &world);
+            }
+            
+            col /= ns as f64;
             let ir = (255.99 * col[0]) as i64;
             let ig = (255.99 * col[1]) as i64;
             let ib = (255.99 * col[2]) as i64;
