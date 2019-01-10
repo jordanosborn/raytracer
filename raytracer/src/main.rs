@@ -15,14 +15,25 @@ use rand::Rng;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 
+fn random_in_unit_sphere() -> Vec3{
+    let mut rng = rand::thread_rng();
+    let ones = Vec3::new(1.0, 1.0, 1.0);
+    let mut p: Vec3;
+    loop {
+        p = 2.0 * Vec3::new(rng.gen(), rng.gen(), rng.gen()) - ones;
+        if p.squared_length() < 1.0 {
+            break;
+        }
+    };
+    p
+}
+
 fn color(ray: &Ray, world: &HitableList) -> Vec3 {
     let mut rec = HitRecord::new();
-    if world.hit(ray, 0.0, std::f64::MAX, &mut rec) {
-        0.5 * Vec3::new(
-            rec.normal.x() + 1.0,
-            rec.normal.y() + 1.0,
-            rec.normal.z() + 1.0,
-        )
+    // ignores hits very close to zero
+    if world.hit(ray, 0.001, std::f64::MAX, &mut rec) {
+        let target = rec.p + rec.normal + random_in_unit_sphere();
+        0.5 * color(&Ray::new(&rec.p, &(target - rec.p)), &world)
     } else {
         let unit_direction = Vec3::unit_vector(&ray.direction());
         let t = 0.5 * (unit_direction.y() + 1.0);
@@ -42,6 +53,7 @@ fn main() {
         .unwrap();
 
     let camera = Camera::new();
+    let gamma = 2.0;
 
     let world = HitableList::new(vec![
         HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)),
@@ -64,6 +76,10 @@ fn main() {
             }
 
             col /= ns as f64;
+            //gamma correction
+            col = col.apply(|&x| {
+                f64::powf(x, 1.0 / gamma)
+            });
             let ir = (255.99 * col[0]) as i64;
             let ig = (255.99 * col[1]) as i64;
             let ib = (255.99 * col[2]) as i64;
