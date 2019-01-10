@@ -5,7 +5,7 @@ pub struct Vec3 {
 
 impl std::fmt::Display for Vec3 {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "({}, {}, {})", self.data[0], self.data[1], self.data[2])
+        write!(f, "{} {} {}", self.data[0], self.data[1], self.data[2])
     }
 }
 
@@ -43,12 +43,14 @@ impl Vec3 {
         (self.data[0] * self.data[0] + self.data[1] * self.data[1] + self.data[2] * self.data[2])
             .sqrt()
     }
+
     #[inline]
     pub fn squared_length(&self) -> f64 {
         self.data[0] * self.data[0] + self.data[1] * self.data[1] + self.data[2] * self.data[2]
     }
+
     #[inline]
-    pub fn make_unit_vector(&self) -> Vec3 {
+    pub fn unit_vector(&self) -> Vec3 {
         let length = (self.data[0] * self.data[0]
             + self.data[1] * self.data[1]
             + self.data[2] * self.data[2])
@@ -60,6 +62,31 @@ impl Vec3 {
                 self.data[2] / length,
             ],
         }
+    }
+
+    #[inline]
+    pub fn make_unit_vector(&mut self) {
+        let length = (self.data[0] * self.data[0]
+            + self.data[1] * self.data[1]
+            + self.data[2] * self.data[2])
+            .sqrt();
+        self.data[0] = self.data[0] / length;
+        self.data[1] = self.data[1] / length;
+        self.data[2] = self.data[2] / length;
+    }
+
+    #[inline]
+    pub fn dot(v1: &Vec3, v2: &Vec3) -> f64 {
+        v1.data[0] * v2.data[0] + v1.data[1] * v2.data[1] + v1.data[2] * v2.data[2]
+    }
+
+    #[inline]
+    pub fn cross(v1: &Vec3, v2: &Vec3) -> Vec3 {
+        Vec3 {data: [
+            v1.data[1] * v2.data[2] - v1.data[2] * v2.data[1],
+            v1.data[2] * v2.data[0] - v1.data[0] * v2.data[2],
+            v1.data[0] * v2.data[1] - v1.data[1] * v2.data[0]
+        ]}
     }
 }
 
@@ -143,6 +170,20 @@ impl std::ops::Mul<f64> for Vec3 {
     }
 }
 
+impl std::ops::Mul<Vec3> for Vec3 {
+    type Output = Vec3;
+    #[inline]
+    fn mul(self, other: Vec3) -> Vec3 {
+        Vec3 {
+                data: [
+                    self.data[0] * other.data[0],
+                    self.data[1] * other.data[1],
+                    self.data[2] * other.data[2]
+                ],
+            }
+    }
+}
+
 impl std::ops::Div<f64> for Vec3 {
     type Output = Vec3;
     #[inline]
@@ -153,6 +194,24 @@ impl std::ops::Div<f64> for Vec3 {
                     self.data[0] / other,
                     self.data[1] / other,
                     self.data[2] / other
+                ],
+            }
+        } else {
+            panic!("Can't divide by zero")
+        }
+    }
+}
+
+impl std::ops::Div<Vec3> for Vec3 {
+    type Output = Vec3;
+    #[inline]
+    fn div(self, other: Vec3) -> Vec3 {
+        if other.data[0] != 0.0 && other.data[1] != 0.0 && other.data[2] != 0.0 {
+            Vec3 {
+                data: [
+                    self.data[0] / other.data[0],
+                    self.data[1] / other.data[1],
+                    self.data[2] / other.data[2]
                 ],
             }
         } else {
