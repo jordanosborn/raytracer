@@ -1,19 +1,19 @@
 mod args;
+mod camera;
 mod hitable;
 mod ray;
 mod vector;
-mod camera;
+use self::camera::Camera;
 use self::hitable::{
     hitable_list::{HitableList, HITABLE},
     sphere::Sphere,
     HitRecord, Hitable,
 };
-use self::camera::Camera;
 use self::ray::Ray;
 use self::vector::Vec3;
+use rand::Rng;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
-use rand::Rng;
 
 fn color(ray: &Ray, world: &HitableList) -> Vec3 {
     let mut rec = HitRecord::new();
@@ -63,7 +63,7 @@ fn main() {
                 let r = camera.get_ray(u, v);
                 col += color(&r, &world);
             }
-            
+
             col /= ns as f64;
             let ir = (255.99 * col[0]) as i64;
             let ig = (255.99 * col[1]) as i64;
