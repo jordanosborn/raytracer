@@ -6,9 +6,6 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub fn new() -> Ray {
-        Ray {a: Vec3::new(0.0, 0.0, 0.0), b: Vec3::new(0.0,0.0,0.0)}
-    }
     pub fn new_from(a: &Vec3, b: &Vec3) -> Ray {
         Ray {a: *a, b: *b}
     }
