@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Vec3 {
     pub data: [f64; 3],
 }
@@ -50,16 +50,16 @@ impl Vec3 {
     }
 
     #[inline]
-    pub fn unit_vector(&self) -> Vec3 {
-        let length = (self.data[0] * self.data[0]
-            + self.data[1] * self.data[1]
-            + self.data[2] * self.data[2])
+    pub fn unit_vector(v: &Vec3) -> Vec3 {
+        let length = (v.data[0] * v.data[0]
+            + v.data[1] * v.data[1]
+            + v.data[2] * v.data[2])
             .sqrt();
         Vec3 {
             data: [
-                self.data[0] / length,
-                self.data[1] / length,
-                self.data[2] / length,
+                v.data[0] / length,
+                v.data[1] / length,
+                v.data[2] / length,
             ],
         }
     }
