@@ -1,4 +1,4 @@
-use rand::{Rng};
+use rand::Rng;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Vec3 {
