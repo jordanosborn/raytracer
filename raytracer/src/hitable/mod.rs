@@ -1,6 +1,6 @@
 pub mod hitable_list;
 pub mod sphere;
-use super::material::{MATERIAL};
+use super::material::MATERIAL;
 use super::ray::Ray;
 use super::vector::Vec3;
 
@@ -9,7 +9,7 @@ pub struct HitRecord {
     pub t: f64,
     pub p: Vec3,
     pub normal: Vec3,
-    pub material: MATERIAL
+    pub material: MATERIAL,
 }
 
 impl HitRecord {

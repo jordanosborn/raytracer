@@ -12,7 +12,11 @@ pub struct Sphere {
 
 impl Sphere {
     pub fn new(center: Vec3, radius: f64, material: MATERIAL) -> Sphere {
-        Sphere { center, radius, material }
+        Sphere {
+            center,
+            radius,
+            material,
+        }
     }
 }
 

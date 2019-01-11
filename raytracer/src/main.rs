@@ -10,7 +10,7 @@ use self::hitable::{
     sphere::Sphere,
     HitRecord, Hitable,
 };
-use self::material::{metal::Metal, lambertian::Lambertian, MATERIAL, Scatter};
+use self::material::{lambertian::Lambertian, metal::Metal, Scatter, MATERIAL};
 use self::ray::Ray;
 use self::vector::Vec3;
 use image::ImageBuffer;
@@ -46,14 +46,14 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
                     Vec3::new(0.0, 0.0, 0.0)
                 }
             }
-            MATERIAL::Lambertian(a)  => {
+            MATERIAL::Lambertian(a) => {
                 if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
                     attenuation * color(&scattered, world, depth + 1u32)
                 } else {
                     Vec3::new(0.0, 0.0, 0.0)
                 }
             }
-            MATERIAL::Empty =>  {
+            MATERIAL::Empty => {
                 let target = rec.p + rec.normal + random_in_unit_sphere();
                 0.5 * color(&Ray::new(&rec.p, &(target - rec.p)), &world, 0u32)
             }
@@ -75,10 +75,26 @@ fn main() {
     let mut buffer = ImageBuffer::new(nx_i as u32, ny_i as u32);
 
     let world = HitableList::new(vec![
-        HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.3))))),
-        HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.0))))),
-        HITABLE::SPHERE(Sphere::new(Vec3::new(1.0, 0.0, -1.0), 0.5, MATERIAL::Metal(Metal::new(Vec3::new(0.8, 0.6, 0.2))))),
-        HITABLE::SPHERE(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 0.5, MATERIAL::Metal(Metal::new(Vec3::new(0.8, 0.8, 0.8))))),
+        HITABLE::SPHERE(Sphere::new(
+            Vec3::new(0.0, 0.0, -1.0),
+            0.5,
+            MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.3))),
+        )),
+        HITABLE::SPHERE(Sphere::new(
+            Vec3::new(0.0, -100.5, -1.0),
+            100.0,
+            MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.0))),
+        )),
+        HITABLE::SPHERE(Sphere::new(
+            Vec3::new(1.0, 0.0, -1.0),
+            0.5,
+            MATERIAL::Metal(Metal::new(Vec3::new(0.8, 0.6, 0.2))),
+        )),
+        HITABLE::SPHERE(Sphere::new(
+            Vec3::new(-1.0, 0.0, -1.0),
+            0.5,
+            MATERIAL::Metal(Metal::new(Vec3::new(0.8, 0.8, 0.8))),
+        )),
     ]);
 
     let pb = ProgressBar::new((ny_i) as u64);
