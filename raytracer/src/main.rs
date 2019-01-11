@@ -66,7 +66,7 @@ fn main() {
     let camera = Camera::new();
     let gamma = 2.0;
 
-    let mut buffer = ImageBuffer::new(nx_i as u32, ny_i as u32);
+    let mut buffer = ImageBuffer::new(nx_i, ny_i);
 
     let world = HitableList::new(vec![
         HITABLE::SPHERE(Sphere::new(

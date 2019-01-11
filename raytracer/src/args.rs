@@ -1,9 +1,9 @@
-pub fn parse_args() -> (i32, i32, i32, String) {
+pub fn parse_args() -> (u32, u32, u32, String) {
     match std::env::args().collect::<Vec<String>>().as_slice() {
         [_, a, b, c, d] => match (
-            a.parse::<i32>(),
-            b.parse::<i32>(),
-            c.parse::<i32>(),
+            a.parse::<u32>(),
+            b.parse::<u32>(),
+            c.parse::<u32>(),
             d.to_string(),
         ) {
             (Ok(a), Ok(b), Ok(c), d) => (a, b, c, d),
