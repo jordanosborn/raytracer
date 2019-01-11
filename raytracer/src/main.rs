@@ -57,17 +57,16 @@ fn main() {
         HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)),
     ]);
 
-    let mut rng = rand::thread_rng();
-    let random_numbers = (0..ns)
-        .map(|_| (rng.gen::<f64>(), rng.gen::<f64>()))
-        .collect::<Vec<(f64, f64)>>();
-
     let pb = ProgressBar::new((ny_i) as u64);
 
     for j in (0..(ny_i)).rev() {
         let row: Vec<(u32, u32, [u8; 4])> = (0..nx_i)
             .into_par_iter()
             .map(|i| {
+                let mut rng = rand::thread_rng();
+                let random_numbers = (0..ns)
+                    .map(|_| (rng.gen::<f64>(), rng.gen::<f64>()))
+                    .collect::<Vec<(f64, f64)>>();
                 let mut col: Vec3 = random_numbers
                     .par_iter()
                     .map(|(rand1, rand2)| {
