@@ -28,22 +28,22 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
         let mut attenuation = Vec3::new(0.0, 0.0, 0.0);
         //This pattern matching does not work perhaps material not set correctly
         match rec.material {
-            MATERIAL::Metal(a) => {
-                if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
+            MATERIAL::Metal(mat) => {
+                if depth < 50 && mat.scatter(ray, &rec, &mut attenuation, &mut scattered) {
                     attenuation * color(&scattered, world, depth + 1u32)
                 } else {
                     Vec3::new(0.0, 0.0, 0.0)
                 }
             }
-            MATERIAL::Lambertian(a) => {
-                if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
+            MATERIAL::Lambertian(mat) => {
+                if depth < 50 && mat.scatter(ray, &rec, &mut attenuation, &mut scattered) {
                     attenuation * color(&scattered, world, depth + 1u32)
                 } else {
                     Vec3::new(0.0, 0.0, 0.0)
                 }
             }
-            MATERIAL::Dielectric(a) => {
-                if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
+            MATERIAL::Dielectric(mat) => {
+                if depth < 50 && mat.scatter(ray, &rec, &mut attenuation, &mut scattered) {
                     attenuation * color(&scattered, world, depth + 1u32)
                 } else {
                     Vec3::new(0.0, 0.0, 0.0)
