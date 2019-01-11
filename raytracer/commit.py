@@ -14,6 +14,7 @@ def main():
     except sp.CalledProcessError:
         print("Failed!")
     else:
+        print("Commiting changes!")
         sp.call(["git", "add", "-u"])
         sp.call(["git", "commit", "-m", sys.argv[1]])
     
