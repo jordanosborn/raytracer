@@ -10,7 +10,9 @@ use self::hitable::{
     sphere::Sphere,
     HitRecord, Hitable,
 };
-use self::material::{lambertian::Lambertian, metal::Metal,dielectric::Dielectric, Scatter, MATERIAL};
+use self::material::{
+    dielectric::Dielectric, lambertian::Lambertian, metal::Metal, Scatter, MATERIAL,
+};
 use self::ray::Ray;
 use self::vector::Vec3;
 use image::ImageBuffer;
@@ -61,7 +63,7 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
 
 fn main() {
     let (nx_i, ny_i, ns, output) = args::parse_args();
-    let (nx, ny) = (nx_i as f64, ny_i as f64);
+    let (nx, ny) = (f64::from(nx_i), f64::from(ny_i));
 
     let camera = Camera::new();
     let gamma = 2.0;
@@ -96,7 +98,7 @@ fn main() {
         )),
     ]);
 
-    let pb = ProgressBar::new((ny_i) as u64);
+    let pb = ProgressBar::new(u64::from(ny_i));
 
     (0..(ny_i)).rev().for_each(|j| {
         let row: Vec<(u32, u32, [u8; 4])> = (0..nx_i)
@@ -109,13 +111,13 @@ fn main() {
                 let mut col: Vec3 = random_numbers
                     .par_iter()
                     .map(|(rand1, rand2)| {
-                        let u = (i as f64 + rand1) / nx;
-                        let v = (j as f64 + rand2) / ny;
+                        let u = (f64::from(i) + rand1) / nx;
+                        let v = (f64::from(j) as f64 + rand2) / ny;
                         let r = camera.get_ray(u, v);
                         color(&r, &world, 0u32)
                     })
                     .sum();
-                col /= ns as f64;
+                col /= f64::from(ns);
                 //gamma correction
                 col = col.apply(|&x| f64::powf(x, 1.0 / gamma));
                 let ir = (255.99 * col[0]) as u8;

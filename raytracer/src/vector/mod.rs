@@ -32,13 +32,13 @@ impl Vec3 {
 
     pub fn zeros() -> Vec3 {
         Vec3 {
-            data: [0.0, 0.0, 0.0]
+            data: [0.0, 0.0, 0.0],
         }
     }
 
     pub fn ones() -> Vec3 {
         Vec3 {
-            data: [1.0, 1.0, 1.0]
+            data: [1.0, 1.0, 1.0],
         }
     }
     #[inline]
@@ -89,7 +89,7 @@ impl Vec3 {
     pub fn reflect(&self, normal: &Vec3) -> Vec3 {
         (*self) - 2.0 * Vec3::dot(self, normal) * (*normal)
     }
-    
+
     pub fn refract(&self, normal: &Vec3, ni_over_nt: f64, refracted: &mut Vec3) -> bool {
         let uv = Vec3::unit_vector(self);
         let dt = Vec3::dot(&uv, &normal);
@@ -108,9 +108,9 @@ impl Vec3 {
             + self.data[1] * self.data[1]
             + self.data[2] * self.data[2])
             .sqrt();
-        self.data[0] = self.data[0] / length;
-        self.data[1] = self.data[1] / length;
-        self.data[2] = self.data[2] / length;
+        self.data[0] /= length;
+        self.data[1] /= length;
+        self.data[2] /= length;
     }
 
     #[inline]
@@ -177,11 +177,9 @@ impl std::ops::Neg for Vec3 {
     type Output = Vec3;
     #[inline]
     fn neg(self) -> Vec3 {
-        Vec3 {data: [
-            -self.data[0],
-            -self.data[1],
-            -self.data[2],
-        ]}
+        Vec3 {
+            data: [-self.data[0], -self.data[1], -self.data[2]],
+        }
     }
 }
 
