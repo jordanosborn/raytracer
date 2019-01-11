@@ -29,6 +29,18 @@ impl Vec3 {
             data: [v.data[0], v.data[1], v.data[2]],
         }
     }
+
+    pub fn zeros() -> Vec3 {
+        Vec3 {
+            data: [0.0, 0.0, 0.0]
+        }
+    }
+
+    pub fn ones() -> Vec3 {
+        Vec3 {
+            data: [1.0, 1.0, 1.0]
+        }
+    }
     #[inline]
     pub fn x(&self) -> f64 {
         self.data[0]
@@ -76,6 +88,18 @@ impl Vec3 {
     #[inline]
     pub fn reflect(&self, normal: &Vec3) -> Vec3 {
         (*self) - 2.0 * Vec3::dot(self, normal) * (*normal)
+    }
+    
+    pub fn refract(&self, normal: &Vec3, ni_over_nt: f64, refracted: &mut Vec3) -> bool {
+        let uv = Vec3::unit_vector(self);
+        let dt = Vec3::dot(&uv, &normal);
+        let discriminant = 1.0 - ni_over_nt.powi(2) * (1.0 - dt.powi(2));
+        if discriminant > 0.0 {
+            *refracted = ni_over_nt * (uv - (*normal) * dt) - (*normal) * discriminant.sqrt();
+            true
+        } else {
+            false
+        }
     }
 
     #[inline]
@@ -146,6 +170,18 @@ impl std::ops::IndexMut<usize> for Vec3 {
         } else {
             panic!("Index invalid")
         }
+    }
+}
+
+impl std::ops::Neg for Vec3 {
+    type Output = Vec3;
+    #[inline]
+    fn neg(self) -> Vec3 {
+        Vec3 {data: [
+            -self.data[0],
+            -self.data[1],
+            -self.data[2],
+        ]}
     }
 }
 

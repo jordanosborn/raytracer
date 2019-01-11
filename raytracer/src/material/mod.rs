@@ -1,7 +1,9 @@
 pub mod lambertian;
 pub mod metal;
+pub mod dielectric;
 use self::lambertian::Lambertian;
 use self::metal::Metal;
+use self::dielectric::Dielectric;
 use crate::hitable::HitRecord;
 use crate::ray::Ray;
 use crate::vector::Vec3;
@@ -10,6 +12,7 @@ use crate::vector::Vec3;
 pub enum MATERIAL {
     Lambertian(Lambertian),
     Metal(Metal),
+    Dielectric(Dielectric),
     Empty,
 }
 

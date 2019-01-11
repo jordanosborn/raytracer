@@ -10,7 +10,7 @@ use self::hitable::{
     sphere::Sphere,
     HitRecord, Hitable,
 };
-use self::material::{lambertian::Lambertian, metal::Metal, Scatter, MATERIAL};
+use self::material::{lambertian::Lambertian, metal::Metal,dielectric::Dielectric, Scatter, MATERIAL};
 use self::ray::Ray;
 use self::vector::Vec3;
 use image::ImageBuffer;
@@ -34,6 +34,13 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
                 }
             }
             MATERIAL::Lambertian(a) => {
+                if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
+                    attenuation * color(&scattered, world, depth + 1u32)
+                } else {
+                    Vec3::new(0.0, 0.0, 0.0)
+                }
+            }
+            MATERIAL::Dielectric(a) => {
                 if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
                     attenuation * color(&scattered, world, depth + 1u32)
                 } else {
@@ -80,13 +87,13 @@ fn main() {
         HITABLE::SPHERE(Sphere::new(
             Vec3::new(-1.0, 0.0, -1.0),
             0.5,
-            MATERIAL::Metal(Metal::new(Vec3::new(0.8, 0.8, 0.8), 1.0)),
+            MATERIAL::Dielectric(Dielectric::new(1.5)),
         )),
     ]);
 
     let pb = ProgressBar::new((ny_i) as u64);
 
-    for j in (0..(ny_i)).rev() {
+    (0..(ny_i)).rev().for_each(|j| {
         let row: Vec<(u32, u32, [u8; 4])> = (0..nx_i)
             .into_par_iter()
             .map(|i| {
@@ -116,7 +123,7 @@ fn main() {
             .for_each(|(x, y, rgba)| buffer.put_pixel(*x, *y, image::Rgba(*rgba)));
 
         pb.inc(1);
-    }
+    });
     pb.finish();
     println!("Writing file to disk");
     buffer.save(&output).expect("File not saved");
