@@ -3,6 +3,7 @@
         "hitable",
         "lambertian",
         "powf",
-        "rgba"
+        "rgba",
+        "schlick"
     ]
 }
