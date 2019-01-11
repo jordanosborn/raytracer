@@ -1,18 +1,16 @@
 use crate::hitable::HitRecord;
-use crate::random_in_unit_sphere;
 use crate::ray::Ray;
 use crate::vector::Vec3;
 
 #[derive(Clone, Copy)]
-pub struct Lambertian {
+pub struct Metal {
     albedo: Vec3,
 }
 
-impl Lambertian {
-    pub fn new(albedo: Vec3) -> Lambertian {
-        Lambertian { albedo }
+impl Metal {
+    pub fn new(albedo: Vec3) -> Metal {
+        Metal { albedo }
     }
-
     pub fn scatter(
         &self,
         r_in: &Ray,
@@ -20,9 +18,9 @@ impl Lambertian {
         attenuation: &mut Vec3,
         scattered: &mut Ray,
     ) -> bool {
-        let target = rec.p + rec.normal + random_in_unit_sphere();
-        *scattered = Ray::new(&rec.p, &(target - rec.p));
+        let reflected = Vec3::unit_vector(&r_in.direction()).reflect(&rec.normal);
+        *scattered = Ray::new(&rec.p, &reflected);
         *attenuation = self.albedo;
-        true
+        Vec3::dot(&scattered.direction(), &rec.normal) > 0.0
     }
 }

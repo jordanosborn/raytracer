@@ -23,7 +23,9 @@ impl Vec3 {
         Vec3 { data: [x, y, z] }
     }
     pub fn new_from(v: &Vec3) -> Vec3 {
-        Vec3 {data: [v.data[0], v.data[1], v.data[2]]}
+        Vec3 {
+            data: [v.data[0], v.data[1], v.data[2]],
+        }
     }
     #[inline]
     pub fn x(&self) -> f64 {
@@ -67,6 +69,11 @@ impl Vec3 {
         Vec3 {
             data: [v.data[0] / length, v.data[1] / length, v.data[2] / length],
         }
+    }
+
+    #[inline]
+    pub fn reflect(&self, normal: &Vec3) -> Vec3 {
+        (*self) - 2.0 * Vec3::dot(self, normal) * (*normal)
     }
 
     #[inline]
