@@ -40,27 +40,22 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
         //This pattern matching does not work perhaps material not set correctly
         match rec.material {
             MATERIAL::Metal(a) => {
-                let target = rec.p + rec.normal + random_in_unit_sphere();
-                0.5 * color(&Ray::new(&rec.p, &(target - rec.p)), &world, 0u32)
-                // if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
-                //     attenuation * color(&scattered, world, depth + 1u32)
-                // } else {
-                //     Vec3::new(0.0, 0.0, 0.0)
-                // }
+                if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
+                    attenuation * color(&scattered, world, depth + 1u32)
+                } else {
+                    Vec3::new(0.0, 0.0, 0.0)
+                }
             }
             MATERIAL::Lambertian(a)  => {
-                let target = rec.p + rec.normal + random_in_unit_sphere();
-                0.5 * color(&Ray::new(&rec.p, &(target - rec.p)), &world, 0u32)
-                // if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
-                //     attenuation * color(&scattered, world, depth + 1u32)
-                // } else {
-                //     Vec3::new(0.0, 0.0, 0.0)
-                // }
+                if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
+                    attenuation * color(&scattered, world, depth + 1u32)
+                } else {
+                    Vec3::new(0.0, 0.0, 0.0)
+                }
             }
             MATERIAL::Empty =>  {
                 let target = rec.p + rec.normal + random_in_unit_sphere();
                 0.5 * color(&Ray::new(&rec.p, &(target - rec.p)), &world, 0u32)
-                //Vec3::new(0.0, 0.0, 0.0)
             }
         }
     } else {
