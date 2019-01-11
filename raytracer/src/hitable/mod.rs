@@ -1,8 +1,8 @@
 pub mod hitable_list;
 pub mod sphere;
+use super::material::Material;
 use super::ray::Ray;
 use super::vector::Vec3;
-use super::material::Material;
 use std::rc::Rc;
 
 #[derive(Clone)]
@@ -10,7 +10,7 @@ pub struct HitRecord {
     pub t: f64,
     pub p: Vec3,
     pub normal: Vec3,
-    pub material: Rc<Material>
+    pub material: Rc<Material>,
 }
 
 impl HitRecord {
@@ -19,7 +19,7 @@ impl HitRecord {
             t: 0.0,
             p: Vec3::new(0.0, 0.0, 0.0),
             normal: Vec3::new(0.0, 0.0, 0.0),
-            material: Rc::new(Material{})
+            material: Rc::new(Material {}),
         }
     }
 }

@@ -84,11 +84,14 @@ impl Vec3 {
         }
     }
 
-    pub fn apply<F>(&self, f:F) -> Vec3 where F: Fn(&f64) -> f64 {
+    pub fn apply<F>(&self, f: F) -> Vec3
+    where
+        F: Fn(&f64) -> f64,
+    {
         Vec3 {
-            data: [f(&self.data[0]), f(&self.data[1]), f(&self.data[2])]
+            data: [f(&self.data[0]), f(&self.data[1]), f(&self.data[2])],
         }
-    } 
+    }
 }
 
 impl std::ops::Index<usize> for Vec3 {

@@ -1,9 +1,9 @@
 mod args;
 mod camera;
 mod hitable;
+mod material;
 mod ray;
 mod vector;
-mod material;
 use self::camera::Camera;
 use self::hitable::{
     hitable_list::{HitableList, HITABLE},
@@ -12,12 +12,11 @@ use self::hitable::{
 };
 use self::ray::Ray;
 use self::vector::Vec3;
-use rand::Rng;
-use std::fs::OpenOptions;
-use std::io::prelude::*;
+use image::ImageBuffer;
 use indicatif::ProgressBar;
+use rand::Rng;
 
-fn random_in_unit_sphere() -> Vec3{
+fn random_in_unit_sphere() -> Vec3 {
     let mut rng = rand::thread_rng();
     let ones = Vec3::new(1.0, 1.0, 1.0);
     let mut p: Vec3;
@@ -26,7 +25,7 @@ fn random_in_unit_sphere() -> Vec3{
         if p.squared_length() < 1.0 {
             break;
         }
-    };
+    }
     p
 }
 
@@ -47,24 +46,17 @@ fn main() {
     let (nx_i, ny_i, ns, output) = args::parse_args();
     let (nx, ny) = (nx_i as f64, ny_i as f64);
     let mut rng = rand::thread_rng();
-    let mut output = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .open(output)
-        .unwrap();
 
     let camera = Camera::new();
     let gamma = 2.0;
+
+    let mut buffer = ImageBuffer::new(nx_i as u32, ny_i as u32);
 
     let world = HitableList::new(vec![
         HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)),
         HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)),
     ]);
 
-    if let Err(e) = output.write(format!("P3\n{} {}\n255\n", nx_i, ny_i).as_bytes()) {
-        panic!("Oh no {}", e)
-    }
     let pb = ProgressBar::new((ny_i) as u64);
     for j in (0..(ny_i)).rev() {
         // write to file in batches (pixel rows)
@@ -80,18 +72,18 @@ fn main() {
 
             col /= ns as f64;
             //gamma correction
-            col = col.apply(|&x| {
-                f64::powf(x, 1.0 / gamma)
-            });
-            let ir = (255.99 * col[0]) as i64;
-            let ig = (255.99 * col[1]) as i64;
-            let ib = (255.99 * col[2]) as i64;
-            if let Err(e) = output.write(format!("{} {} {}\n", ir, ig, ib).as_bytes()) {
-                panic!("Oh no {}", e)
-            }
-            
+            col = col.apply(|&x| f64::powf(x, 1.0 / gamma));
+            let ir = (255.99 * col[0]) as u8;
+            let ig = (255.99 * col[1]) as u8;
+            let ib = (255.99 * col[2]) as u8;
+            buffer.put_pixel(
+                i as u32,
+                (ny_i - j - 1) as u32,
+                image::Rgba([ir, ig, ib, 0xFF]),
+            );
         }
         pb.inc(1);
     }
-    pb.finish_with_message("Done");
+    pb.finish();
+    buffer.save(output).expect("File not saved");
 }
