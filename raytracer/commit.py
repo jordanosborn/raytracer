@@ -5,6 +5,7 @@ import sys
 
 def main():
     print("Formatting code!")
+    gitworkflow = ["git", "add", "-u", "&&", "git", "commit", "-m", sys.argv[1], "&&", "git", "pull", "--rebase", "&&", "git", "push"]
     fmt = sp.check_output(["cargo", "fmt"])
     try:
         print("Linting code!")
@@ -15,8 +16,7 @@ def main():
         print("Failed!")
     else:
         print("Commiting changes!")
-        sp.call(["git", "add", "-u"])
-        sp.call(["git", "commit", "-m", sys.argv[1]])
+        sp.call(gitworkflow)
     
 
 if __name__ == "__main__":
