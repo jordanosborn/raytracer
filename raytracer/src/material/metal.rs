@@ -2,6 +2,8 @@ use crate::hitable::HitRecord;
 use crate::ray::Ray;
 use crate::vector::Vec3;
 
+use super::Scatter;
+
 #[derive(Clone, Copy)]
 pub struct Metal {
     albedo: Vec3,
@@ -11,7 +13,10 @@ impl Metal {
     pub fn new(albedo: Vec3) -> Metal {
         Metal { albedo }
     }
-    pub fn scatter(
+}
+
+impl Scatter for Metal {
+    fn scatter(
         &self,
         r_in: &Ray,
         rec: &HitRecord,

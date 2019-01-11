@@ -7,7 +7,7 @@ use crate::material::MATERIAL;
 pub struct Sphere {
     center: Vec3,
     radius: f64,
-    material: MATERIAL,
+    pub material: MATERIAL,
 }
 
 impl Sphere {

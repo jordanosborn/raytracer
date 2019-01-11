@@ -10,7 +10,7 @@ use self::hitable::{
     sphere::Sphere,
     HitRecord, Hitable,
 };
-use self::material::{metal::Metal, lambertian::Lambertian, MATERIAL};
+use self::material::{metal::Metal, lambertian::Lambertian, MATERIAL, Scatter};
 use self::ray::Ray;
 use self::vector::Vec3;
 use image::ImageBuffer;
@@ -31,12 +31,38 @@ fn random_in_unit_sphere() -> Vec3 {
     p
 }
 
-fn color(ray: &Ray, world: &HitableList) -> Vec3 {
+fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
     let mut rec: HitRecord = HitRecord::new();
     // ignores hits very close to zero
     if world.hit(ray, 0.001, std::f64::MAX, &mut rec) {
-        let target = rec.p + rec.normal + random_in_unit_sphere();
-        0.5 * color(&Ray::new(&rec.p, &(target - rec.p)), &world)
+        let mut scattered = Ray::new(&Vec3::new(0.0, 0.0, 0.0), &Vec3::new(0.0, 0.0, 0.0));
+        let mut attenuation = Vec3::new(0.0, 0.0, 0.0);
+        //This pattern matching does not work perhaps material not set correctly
+        match rec.material {
+            MATERIAL::Metal(a) => {
+                let target = rec.p + rec.normal + random_in_unit_sphere();
+                0.5 * color(&Ray::new(&rec.p, &(target - rec.p)), &world, 0u32)
+                // if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
+                //     attenuation * color(&scattered, world, depth + 1u32)
+                // } else {
+                //     Vec3::new(0.0, 0.0, 0.0)
+                // }
+            }
+            MATERIAL::Lambertian(a)  => {
+                let target = rec.p + rec.normal + random_in_unit_sphere();
+                0.5 * color(&Ray::new(&rec.p, &(target - rec.p)), &world, 0u32)
+                // if depth < 50 && a.scatter(ray, &rec, &mut attenuation, &mut scattered) {
+                //     attenuation * color(&scattered, world, depth + 1u32)
+                // } else {
+                //     Vec3::new(0.0, 0.0, 0.0)
+                // }
+            }
+            MATERIAL::Empty =>  {
+                let target = rec.p + rec.normal + random_in_unit_sphere();
+                0.5 * color(&Ray::new(&rec.p, &(target - rec.p)), &world, 0u32)
+                //Vec3::new(0.0, 0.0, 0.0)
+            }
+        }
     } else {
         let unit_direction = Vec3::unit_vector(&ray.direction());
         let t = 0.5 * (unit_direction.y() + 1.0);
@@ -56,8 +82,8 @@ fn main() {
     let world = HitableList::new(vec![
         HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.3))))),
         HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.0))))),
-        HITABLE::SPHERE(Sphere::new(Vec3::new(1.0, 0.0, -1.0), 0.5, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.6, 0.2))))),
-        HITABLE::SPHERE(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 0.5, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.8, 0.8))))),
+        HITABLE::SPHERE(Sphere::new(Vec3::new(1.0, 0.0, -1.0), 0.5, MATERIAL::Metal(Metal::new(Vec3::new(0.8, 0.6, 0.2))))),
+        HITABLE::SPHERE(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 0.5, MATERIAL::Metal(Metal::new(Vec3::new(0.8, 0.8, 0.8))))),
     ]);
 
     let pb = ProgressBar::new((ny_i) as u64);
@@ -76,7 +102,7 @@ fn main() {
                         let u = (i as f64 + rand1) / nx;
                         let v = (j as f64 + rand2) / ny;
                         let r = camera.get_ray(u, v);
-                        color(&r, &world)
+                        color(&r, &world, 0u32)
                     })
                     .sum();
                 col /= ns as f64;

@@ -33,7 +33,7 @@ impl Hitable for HitableList {
                         rec.normal = temp_rec.normal;
                         rec.p = temp_rec.p;
                         rec.t = temp_rec.t;
-                        rec.material = temp_rec.material;
+                        rec.material = v.material;
                     }
                 }
             }
