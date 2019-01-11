@@ -18,19 +18,6 @@ use indicatif::ProgressBar;
 use rand::Rng;
 use rayon::prelude::*;
 
-fn random_in_unit_sphere() -> Vec3 {
-    let mut rng = rand::thread_rng();
-    let ones = Vec3::new(1.0, 1.0, 1.0);
-    let mut p: Vec3;
-    loop {
-        p = 2.0 * Vec3::new(rng.gen(), rng.gen(), rng.gen()) - ones;
-        if p.squared_length() < 1.0 {
-            break;
-        }
-    }
-    p
-}
-
 fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
     let mut rec: HitRecord = HitRecord::new();
     // ignores hits very close to zero
@@ -54,7 +41,7 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
                 }
             }
             MATERIAL::Empty => {
-                let target = rec.p + rec.normal + random_in_unit_sphere();
+                let target = rec.p + rec.normal + Vec3::random_in_unit_sphere();
                 0.5 * color(&Ray::new(&rec.p, &(target - rec.p)), &world, 0u32)
             }
         }

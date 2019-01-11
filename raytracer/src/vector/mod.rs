@@ -1,3 +1,5 @@
+use rand::{Rng};
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Vec3 {
     pub data: [f64; 3],
@@ -110,6 +112,19 @@ impl Vec3 {
         Vec3 {
             data: [f(&self.data[0]), f(&self.data[1]), f(&self.data[2])],
         }
+    }
+
+    pub fn random_in_unit_sphere() -> Vec3 {
+        let mut rng = rand::thread_rng();
+        let ones = Vec3::new(1.0, 1.0, 1.0);
+        let mut p: Vec3;
+        loop {
+            p = 2.0 * Vec3::new(rng.gen(), rng.gen(), rng.gen()) - ones;
+            if p.squared_length() < 1.0 {
+                break;
+            }
+        }
+        p
     }
 }
 
