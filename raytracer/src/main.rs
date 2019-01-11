@@ -86,6 +86,11 @@ fn main() {
         )),
         HITABLE::SPHERE(Sphere::new(
             Vec3::new(-1.0, 0.0, -1.0),
+            -0.45,
+            MATERIAL::Dielectric(Dielectric::new(1.5)),
+        )),
+        HITABLE::SPHERE(Sphere::new(
+            Vec3::new(-1.0, 0.0, -1.0),
             0.5,
             MATERIAL::Dielectric(Dielectric::new(1.5)),
         )),
