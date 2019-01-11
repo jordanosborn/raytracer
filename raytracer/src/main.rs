@@ -15,6 +15,7 @@ use self::vector::Vec3;
 use image::ImageBuffer;
 use indicatif::ProgressBar;
 use rand::Rng;
+use rayon::prelude::*;
 
 fn random_in_unit_sphere() -> Vec3 {
     let mut rng = rand::thread_rng();
@@ -45,7 +46,6 @@ fn color(ray: &Ray, world: &HitableList) -> Vec3 {
 fn main() {
     let (nx_i, ny_i, ns, output) = args::parse_args();
     let (nx, ny) = (nx_i as f64, ny_i as f64);
-    let mut rng = rand::thread_rng();
 
     let camera = Camera::new();
     let gamma = 2.0;
@@ -57,18 +57,24 @@ fn main() {
         HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)),
     ]);
 
+    let mut rng = rand::thread_rng();
+    let random_numbers = (0..ns)
+        .map(|_| (rng.gen::<f64>(), rng.gen::<f64>()))
+        .collect::<Vec<(f64, f64)>>();
+
     let pb = ProgressBar::new((ny_i) as u64);
     for j in (0..(ny_i)).rev() {
         // write to file in batches (pixel rows)
         for i in 0..nx_i {
-            let mut col = Vec3::new(0.0, 0.0, 0.0);
-            for _ in 0..ns {
-                let (rand1, rand2): (f64, f64) = (rng.gen(), rng.gen());
-                let u: f64 = (i as f64 + rand1) / nx;
-                let v: f64 = (j as f64 + rand2) / ny;
-                let r = camera.get_ray(u, v);
-                col += color(&r, &world);
-            }
+            let mut col: Vec3 = random_numbers
+                .par_iter()
+                .map(|(rand1, rand2)| {
+                    let u = (i as f64 + rand1) / nx;
+                    let v = (j as f64 + rand2) / ny;
+                    let r = camera.get_ray(u, v);
+                    color(&r, &world)
+                })
+                .sum();
 
             col /= ns as f64;
             //gamma correction
@@ -85,5 +91,7 @@ fn main() {
         pb.inc(1);
     }
     pb.finish();
-    buffer.save(output).expect("File not saved");
+    println!("Writing file to disk");
+    buffer.save(&output).expect("File not saved");
+    println!("{} saved", output);
 }

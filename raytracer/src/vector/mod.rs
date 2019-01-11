@@ -8,6 +8,15 @@ impl std::fmt::Display for Vec3 {
         write!(f, "{} {} {}", self.data[0], self.data[1], self.data[2])
     }
 }
+impl std::iter::Sum<Vec3> for Vec3 {
+    fn sum<I: Iterator<Item = Vec3>>(iter: I) -> Vec3 {
+        let mut s = Vec3::new(0.0, 0.0, 0.0);
+        for x in iter {
+            s += x;
+        }
+        s
+    }
+}
 
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
