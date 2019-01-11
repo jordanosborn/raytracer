@@ -1,16 +1,18 @@
 use super::Ray;
 use super::Vec3;
 use super::{HitRecord, Hitable};
+use crate::material::MATERIAL;
 
 #[derive(Copy, Clone)]
 pub struct Sphere {
     center: Vec3,
     radius: f64,
+    material: MATERIAL,
 }
 
 impl Sphere {
-    pub fn new(center: Vec3, radius: f64) -> Sphere {
-        Sphere { center, radius }
+    pub fn new(center: Vec3, radius: f64, material: MATERIAL) -> Sphere {
+        Sphere { center, radius, material }
     }
 }
 

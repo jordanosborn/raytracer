@@ -7,4 +7,5 @@ use self::metal::Metal;
 pub enum MATERIAL {
     Lambertian(Lambertian),
     Metal(Metal),
+    Empty
 }

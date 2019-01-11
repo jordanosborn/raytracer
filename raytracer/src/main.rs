@@ -10,6 +10,7 @@ use self::hitable::{
     sphere::Sphere,
     HitRecord, Hitable,
 };
+use self::material::{metal::Metal, lambertian::Lambertian, MATERIAL};
 use self::ray::Ray;
 use self::vector::Vec3;
 use image::ImageBuffer;
@@ -31,7 +32,7 @@ fn random_in_unit_sphere() -> Vec3 {
 }
 
 fn color(ray: &Ray, world: &HitableList) -> Vec3 {
-    let mut rec = HitRecord::new();
+    let mut rec: HitRecord = HitRecord::new();
     // ignores hits very close to zero
     if world.hit(ray, 0.001, std::f64::MAX, &mut rec) {
         let target = rec.p + rec.normal + random_in_unit_sphere();
@@ -53,8 +54,10 @@ fn main() {
     let mut buffer = ImageBuffer::new(nx_i as u32, ny_i as u32);
 
     let world = HitableList::new(vec![
-        HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)),
-        HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)),
+        HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.3))))),
+        HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.0))))),
+        HITABLE::SPHERE(Sphere::new(Vec3::new(1.0, 0.0, -1.0), 0.5, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.6, 0.2))))),
+        HITABLE::SPHERE(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 0.5, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.8, 0.8))))),
     ]);
 
     let pb = ProgressBar::new((ny_i) as u64);
