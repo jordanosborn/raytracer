@@ -63,31 +63,32 @@ fn main() {
         .collect::<Vec<(f64, f64)>>();
 
     let pb = ProgressBar::new((ny_i) as u64);
-    for j in (0..(ny_i)).rev() {
-        // write to file in batches (pixel rows)
-        for i in 0..nx_i {
-            let mut col: Vec3 = random_numbers
-                .par_iter()
-                .map(|(rand1, rand2)| {
-                    let u = (i as f64 + rand1) / nx;
-                    let v = (j as f64 + rand2) / ny;
-                    let r = camera.get_ray(u, v);
-                    color(&r, &world)
-                })
-                .sum();
 
-            col /= ns as f64;
-            //gamma correction
-            col = col.apply(|&x| f64::powf(x, 1.0 / gamma));
-            let ir = (255.99 * col[0]) as u8;
-            let ig = (255.99 * col[1]) as u8;
-            let ib = (255.99 * col[2]) as u8;
-            buffer.put_pixel(
-                i as u32,
-                (ny_i - j - 1) as u32,
-                image::Rgba([ir, ig, ib, 0xFF]),
-            );
-        }
+    for j in (0..(ny_i)).rev() {
+        let row: Vec<(u32, u32, [u8; 4])> = (0..nx_i)
+            .into_par_iter()
+            .map(|i| {
+                let mut col: Vec3 = random_numbers
+                    .par_iter()
+                    .map(|(rand1, rand2)| {
+                        let u = (i as f64 + rand1) / nx;
+                        let v = (j as f64 + rand2) / ny;
+                        let r = camera.get_ray(u, v);
+                        color(&r, &world)
+                    })
+                    .sum();
+                col /= ns as f64;
+                //gamma correction
+                col = col.apply(|&x| f64::powf(x, 1.0 / gamma));
+                let ir = (255.99 * col[0]) as u8;
+                let ig = (255.99 * col[1]) as u8;
+                let ib = (255.99 * col[2]) as u8;
+                (i as u32, (ny_i - j - 1) as u32, [ir, ig, ib, 0xFF])
+            })
+            .collect();
+        row.iter()
+            .for_each(|(x, y, rgba)| buffer.put_pixel(*x, *y, image::Rgba(*rgba)));
+
         pb.inc(1);
     }
     pb.finish();
