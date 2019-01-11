@@ -1,2 +1,9 @@
+pub mod lambertian;
+use self::lambertian::Lambertian;
+
 #[derive(Clone, Copy)]
-pub struct Material {}
+pub enum MATERIAL {
+    Lambertian(Lambertian)
+}
+
+

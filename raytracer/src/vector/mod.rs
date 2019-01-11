@@ -22,6 +22,9 @@ impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 { data: [x, y, z] }
     }
+    pub fn new_from(v: &Vec3) -> Vec3 {
+        Vec3 {data: [v.data[0], v.data[1], v.data[2]]}
+    }
     #[inline]
     pub fn x(&self) -> f64 {
         self.data[0]
