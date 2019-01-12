@@ -374,4 +374,11 @@ mod tests {
         let z = Vec3::new(0.0, 0.0, -1.0);
         assert_eq!(x - y, z);
     }
+
+    #[test]
+    fn test_select() {
+        let x = Vec3::new(1.0, 2.0, 3.0);
+        assert_eq!(x[2], x.z());
+        assert_eq!(x[2], x.b());
+    }
 }
