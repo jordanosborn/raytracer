@@ -382,4 +382,20 @@ mod tests {
         assert_eq!(x[2], x.z());
         assert_eq!(x[2], x.b());
     }
+
+    #[test]
+    fn test_random_in_unit_disk() {
+        for _ in 0..100 {
+            let x = Vec3::random_in_unit_disk();
+            assert!(x.length() < 1.0);
+            assert!(x[2] == 0.0);
+        }
+    }
+    #[test]
+    fn test_random_in_unit_sphere() {
+        for _ in 0..100 {
+            let x = Vec3::random_in_unit_sphere();
+            assert!(x.length() < 1.0);
+        }
+    }
 }
