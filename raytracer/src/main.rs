@@ -65,7 +65,13 @@ fn main() {
     let (nx_i, ny_i, ns, output) = args::parse_args();
     let (nx, ny) = (f64::from(nx_i), f64::from(ny_i));
 
-    let camera = Camera::new(90.0, nx / ny);
+    let camera = Camera::new(
+        Vec3::new(-2.0, 2.0, 1.0),
+        Vec3::new(0.0, 0.0, -1.0),
+        Vec3::new(0.0, 1.0, 0.0),
+        90.0,
+        nx / ny,
+    );
     let gamma = 2.0;
 
     let mut buffer = ImageBuffer::new(nx_i, ny_i);

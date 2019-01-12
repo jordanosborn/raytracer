@@ -10,15 +10,24 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(vertical_fov: f64, aspect: f64) -> Camera {
+    pub fn new(
+        look_from: Vec3,
+        look_at: Vec3,
+        v_up: Vec3,
+        vertical_fov: f64,
+        aspect: f64,
+    ) -> Camera {
         let theta = vertical_fov * PI / 180.0;
         let half_height = (theta / 2.0).tan();
         let half_width = aspect * half_height;
+        let w = Vec3::unit_vector(&(look_from - look_at));
+        let u = Vec3::unit_vector(&Vec3::cross(&v_up, &w));
+        let v = Vec3::cross(&w, &u);
         Camera {
-            origin: Vec3::zeros(),
-            lower_left_corner: Vec3::new(-half_width, -half_height, -1.0),
-            horizontal: Vec3::new(2.0 * half_width, 0.0, 0.0),
-            vertical: Vec3::new(0.0, 2.0 * half_height, 0.0),
+            origin: look_from,
+            lower_left_corner: look_from - half_width * u - half_height * v - w,
+            horizontal: 2.0 * half_width * u,
+            vertical: 2.0 * half_height * v,
         }
     }
 
