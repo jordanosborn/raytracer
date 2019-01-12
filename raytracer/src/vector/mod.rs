@@ -2,6 +2,7 @@ use rand::Rng;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Vec3 {
+    ///Vector class
     pub data: [f64; 3],
 }
 
