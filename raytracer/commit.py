@@ -20,7 +20,6 @@ def main(cwd: str, cargo: Dict[str, str]):
     print("Generating docs!")
     docs = sp.check_output(["cargo", "doc", "--no-deps"])
     copy_tree(doc_dir, doc_dest_dir)
-    #TODO: copy docs to folder
     try:
         print("Linting code!")
         lint = sp.check_output(["cargo", "clippy", "--all-features", "--", "-D", "warnings"])
