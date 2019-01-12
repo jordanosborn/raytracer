@@ -51,7 +51,15 @@ def doc(cwd: str, cargo: Dict[str, str]):
     sp.call(["cargo", "doc"] + sys.argv[2:])
 
 if __name__ == "__main__":
-
+    dispatch = {
+        "commit": commit,
+        "debug": debug,
+        "run": run,
+        "test": test,
+        "fmt": fmt,
+        "lint": lint,
+        "doc": doc
+    }
     cwd = os.getcwd()
     if not os.path.exists(f"{cwd}/Cargo.toml"):
         print("Not inside a crate!")
@@ -67,18 +75,8 @@ if __name__ == "__main__":
             elif sublevel is not None:
                 split = list(map(lambda x: x.strip(), l.split("=")))
                 cargo[sublevel][split[0]] = split[1].replace('"', '')
-        if "commit" == sys.argv[1]:
-            commit(cwd, cargo)
-        elif "debug" == sys.argv[1]:
-            debug(cwd, cargo)
-        elif "run" == sys.argv[1]:
-            run(cwd, cargo)
-        elif "test" == sys.argv[1]:
-            test(cwd, cargo)
-        elif "fmt" == sys.argv[1]:
-            fmt(cwd, cargo)
-        elif "lint" == sys.argv[1]:
-            lint(cwd, cargo)
-        elif "doc" == sys.argv[1]:
-            doc(cwd, cargo)
+        if sys.argv[1] in dispatch.keys():
+            dispatch[sys.argv[1]](cwd, cargo)
+        else:
+            print("No valid arguments supplied!")
 
