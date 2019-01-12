@@ -20,17 +20,17 @@ use indicatif::ProgressBar;
 use rand::Rng;
 use rayon::prelude::*;
 
-fn random_scene() -> HitableList {
-    let n = 500;
+fn random_scene(n: usize) -> HitableList {
     let mut list: Vec<HITABLE> = Vec::with_capacity(n + 1);
+    let size = (f64::from(500 - 4).sqrt() / 2.0) as i32;
     list.push(HITABLE::SPHERE(Sphere::new(
         Vec3::new(0.0, -1000.0, 0.0),
         1000.0,
         MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.5, 0.5, 0.5))),
     )));
     let mut rng = rand::thread_rng();
-    for a in -11..11 {
-        for b in -11..11 {
+    for a in -size..size {
+        for b in -size..size {
             //diffuse
             let choose_mat = rng.gen::<f64>();
             let center = Vec3::new(
@@ -135,45 +135,25 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
 fn main() {
     let (nx_i, ny_i, ns, output) = args::parse_args();
     let (nx, ny) = (f64::from(nx_i), f64::from(ny_i));
+    let gamma = 2.0;
+    let mut buffer = ImageBuffer::new(nx_i, ny_i);
+
+    let look_from = Vec3::new(13.0, 2.0, 3.0);
+    let look_at = Vec3::new(0.0, 0.0, 0.0);
+    let dist_to_focus = (look_from - look_at).length();
+    let aperture = 0.1;
 
     let camera = Camera::new(
-        Vec3::new(-2.0, 2.0, 1.0),
-        Vec3::new(0.0, 0.0, -1.0),
+        look_from,
+        look_at,
         Vec3::new(0.0, 1.0, 0.0),
-        90.0,
+        20.0,
         nx / ny,
+        aperture,
+        dist_to_focus,
     );
-    let gamma = 2.0;
 
-    let mut buffer = ImageBuffer::new(nx_i, ny_i);
-    let world = random_scene();
-    // let world = HitableList::new(vec![
-    //     HITABLE::SPHERE(Sphere::new(
-    //         Vec3::new(0.0, 0.0, -1.0),
-    //         0.5,
-    //         MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.3))),
-    //     )),
-    //     HITABLE::SPHERE(Sphere::new(
-    //         Vec3::new(0.0, -100.5, -1.0),
-    //         100.0,
-    //         MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.0))),
-    //     )),
-    //     HITABLE::SPHERE(Sphere::new(
-    //         Vec3::new(1.0, 0.0, -1.0),
-    //         0.5,
-    //         MATERIAL::Metal(Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.3)),
-    //     )),
-    //     HITABLE::SPHERE(Sphere::new(
-    //         Vec3::new(-1.0, 0.0, -1.0),
-    //         -0.45,
-    //         MATERIAL::Dielectric(Dielectric::new(1.5)),
-    //     )),
-    //     HITABLE::SPHERE(Sphere::new(
-    //         Vec3::new(-1.0, 0.0, -1.0),
-    //         0.5,
-    //         MATERIAL::Dielectric(Dielectric::new(1.5)),
-    //     )),
-    // ]);
+    let world = random_scene(500);
 
     let pb = ProgressBar::new(u64::from(ny_i));
 
