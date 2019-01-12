@@ -372,6 +372,6 @@ mod tests {
         let x = Vec3::new(1.0, 2.0, 3.0);
         let y = Vec3::new(1.0, 2.0, 4.0);
         let z = Vec3::new(0.0, 0.0, -1.0);
-        assert_eq!(x-y, z);
+        assert_eq!(x - y, z);
     }
 }
