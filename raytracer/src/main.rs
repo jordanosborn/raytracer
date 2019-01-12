@@ -26,7 +26,6 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
     if world.hit(ray, 0.001, std::f64::MAX, &mut rec) {
         let mut scattered = Ray::new(&Vec3::new(0.0, 0.0, 0.0), &Vec3::new(0.0, 0.0, 0.0));
         let mut attenuation = Vec3::new(0.0, 0.0, 0.0);
-        //This pattern matching does not work perhaps material not set correctly
         match rec.material {
             MATERIAL::Metal(mat) => {
                 if depth < 50 && mat.scatter(ray, &rec, &mut attenuation, &mut scattered) {
