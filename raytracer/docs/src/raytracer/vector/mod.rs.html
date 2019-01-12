@@ -375,6 +375,13 @@
 <span id="375">375</span>
 <span id="376">376</span>
 <span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="ident">rand</span>::<span class="ident">Rng</span>;
 
@@ -751,6 +758,13 @@
         <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">Vec3</span>::<span class="ident">new</span>(<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">4.0</span>);
         <span class="kw">let</span> <span class="ident">z</span> <span class="op">=</span> <span class="ident">Vec3</span>::<span class="ident">new</span>(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="op">-</span><span class="number">1.0</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">x</span> <span class="op">-</span> <span class="ident">y</span>, <span class="ident">z</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_select</span>() {
+        <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">Vec3</span>::<span class="ident">new</span>(<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">3.0</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">x</span>[<span class="number">2</span>], <span class="ident">x</span>.<span class="ident">z</span>());
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">x</span>[<span class="number">2</span>], <span class="ident">x</span>.<span class="ident">b</span>());
     }
 }
 </pre>
