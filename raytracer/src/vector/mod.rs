@@ -140,10 +140,22 @@ impl Vec3 {
 
     pub fn random_in_unit_sphere() -> Vec3 {
         let mut rng = rand::thread_rng();
-        let ones = Vec3::new(1.0, 1.0, 1.0);
+        let ones = Vec3::ones();
         let mut p: Vec3;
         loop {
             p = 2.0 * Vec3::new(rng.gen(), rng.gen(), rng.gen()) - ones;
+            if p.squared_length() < 1.0 {
+                break;
+            }
+        }
+        p
+    }
+    pub fn random_in_unit_disk() -> Vec3 {
+        let mut rng = rand::thread_rng();
+        let ones = Vec3::new(1.0, 1.0, 0.0);
+        let mut p: Vec3;
+        loop {
+            p = 2.0 * Vec3::new(rng.gen(), rng.gen(), 0.0) - ones;
             if p.squared_length() < 1.0 {
                 break;
             }
@@ -348,12 +360,18 @@ impl std::ops::DivAssign<Vec3> for Vec3 {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn test_add() {
         let x = Vec3::new(1.0, 2.0, 3.0);
         let y = Vec3::new(1.0, 2.0, 4.0);
         let z = Vec3::new(2.0, 4.0, 7.0);
         assert_eq!(x + y, z);
+    }
+    #[test]
+    fn test_sub() {
+        let x = Vec3::new(1.0, 2.0, 3.0);
+        let y = Vec3::new(1.0, 2.0, 4.0);
+        let z = Vec3::new(0.0, 0.0, -1.0);
+        assert_eq!(x-y, z);
     }
 }
