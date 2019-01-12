@@ -20,6 +20,32 @@ use indicatif::ProgressBar;
 use rand::Rng;
 use rayon::prelude::*;
 
+fn random_scene() -> HitableList {
+    let n = 500;
+    let mut list: Vec<HITABLE> = Vec::with_capacity(n + 1);
+    list.push(HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, -1000.0, 0.0), 1000.0, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.5, 0.5, 0.5))))));
+    let mut rng = rand::thread_rng();
+    for a in -11..11 {
+        for b in -11..11 { //diffuse
+            let choose_mat = rng.gen::<f64>();
+            let center = Vec3::new(f64::from(a) + 0.9 * rng.gen::<f64>(), 0.2, f64::from(b) + 0.9 * rng.gen::<f64>());
+            if (center - Vec3::new(4.0, 0.2, 0.0)).length() > 0.9 {
+                if choose_mat < 0.8 {
+                    list.push(HITABLE::SPHERE(Sphere::new(center, 0.2, MATERIAL::Lambertian(Lambertian::new(Vec3::new(rng.gen::<f64>()*rng.gen::<f64>(), rng.gen::<f64>()*rng.gen::<f64>(), rng.gen::<f64>()*rng.gen::<f64>()))))));
+                } else if choose_mat < 0.95 { //metal
+                    list.push(HITABLE::SPHERE(Sphere::new(center, 0.2, MATERIAL::Metal(Metal::new(Vec3::new(0.5 * (1.0 + rng.gen::<f64>()), 0.5 * (1.0 + rng.gen::<f64>()), 0.5 * (1.0 + rng.gen::<f64>())), 0.5 * rng.gen::<f64>())))));
+                } else { //glass
+                    list.push(HITABLE::SPHERE(Sphere::new(center, 0.2, MATERIAL::Dielectric(Dielectric::new(1.5)))));
+                }
+            }
+        }
+    }
+    list.push(HITABLE::SPHERE(Sphere::new(Vec3::new(0.0, 1.0, 0.0), 1.0, MATERIAL::Dielectric(Dielectric::new(1.5)))));
+    list.push(HITABLE::SPHERE(Sphere::new(Vec3::new(-4.0, 1.0, 0.0), 1.0, MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.4, 0.2, 0.1))))));
+    list.push(HITABLE::SPHERE(Sphere::new(Vec3::new(4.0, 1.0, 0.0), 1.0, MATERIAL::Metal(Metal::new(Vec3::new(0.7, 0.6, 0.5), 0.0)))));
+    HitableList::new(list)
+}
+
 fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
     let mut rec: HitRecord = HitRecord::new();
     // ignores hits very close to zero
@@ -74,34 +100,34 @@ fn main() {
     let gamma = 2.0;
 
     let mut buffer = ImageBuffer::new(nx_i, ny_i);
-
-    let world = HitableList::new(vec![
-        HITABLE::SPHERE(Sphere::new(
-            Vec3::new(0.0, 0.0, -1.0),
-            0.5,
-            MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.3))),
-        )),
-        HITABLE::SPHERE(Sphere::new(
-            Vec3::new(0.0, -100.5, -1.0),
-            100.0,
-            MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.0))),
-        )),
-        HITABLE::SPHERE(Sphere::new(
-            Vec3::new(1.0, 0.0, -1.0),
-            0.5,
-            MATERIAL::Metal(Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.3)),
-        )),
-        HITABLE::SPHERE(Sphere::new(
-            Vec3::new(-1.0, 0.0, -1.0),
-            -0.45,
-            MATERIAL::Dielectric(Dielectric::new(1.5)),
-        )),
-        HITABLE::SPHERE(Sphere::new(
-            Vec3::new(-1.0, 0.0, -1.0),
-            0.5,
-            MATERIAL::Dielectric(Dielectric::new(1.5)),
-        )),
-    ]);
+    let world = random_scene();
+    // let world = HitableList::new(vec![
+    //     HITABLE::SPHERE(Sphere::new(
+    //         Vec3::new(0.0, 0.0, -1.0),
+    //         0.5,
+    //         MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.3))),
+    //     )),
+    //     HITABLE::SPHERE(Sphere::new(
+    //         Vec3::new(0.0, -100.5, -1.0),
+    //         100.0,
+    //         MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.8, 0.3, 0.0))),
+    //     )),
+    //     HITABLE::SPHERE(Sphere::new(
+    //         Vec3::new(1.0, 0.0, -1.0),
+    //         0.5,
+    //         MATERIAL::Metal(Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.3)),
+    //     )),
+    //     HITABLE::SPHERE(Sphere::new(
+    //         Vec3::new(-1.0, 0.0, -1.0),
+    //         -0.45,
+    //         MATERIAL::Dielectric(Dielectric::new(1.5)),
+    //     )),
+    //     HITABLE::SPHERE(Sphere::new(
+    //         Vec3::new(-1.0, 0.0, -1.0),
+    //         0.5,
+    //         MATERIAL::Dielectric(Dielectric::new(1.5)),
+    //     )),
+    // ]);
 
     let pb = ProgressBar::new(u64::from(ny_i));
 

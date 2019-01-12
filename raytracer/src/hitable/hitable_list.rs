@@ -41,3 +41,16 @@ impl Hitable for HitableList {
         hit_anything
     }
 }
+
+impl std::ops::Add for HitableList {
+    type Output = HitableList;
+    fn add(self, hl2: HitableList) -> HitableList {
+        let mut new_list = self.list.clone();
+        let mut old_list = hl2.clone();
+        new_list.append(&mut old_list.list);
+        HitableList {
+            length: self.length + hl2.length,
+            list: new_list,
+        }
+    }
+}
