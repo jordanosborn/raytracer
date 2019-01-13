@@ -20,7 +20,8 @@ use indicatif::ProgressBar;
 use rand::Rng;
 use rayon::prelude::*;
 
-/// Generates a random scene of n-4 tiny spheres, 1 large that all others lie on and 3 smaller ones
+/** Generates a random scene of n-4 tiny spheres, 1 large that all others lie on and 3 smaller ones
+ */
 fn random_scene(n: usize) -> HitableList {
     let mut list: Vec<HITABLE> = Vec::with_capacity(n + 1);
     let size = (f64::from(n as i32 - 4).sqrt() / 2.0) as i32;
