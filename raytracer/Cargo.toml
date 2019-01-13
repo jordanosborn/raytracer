@@ -3,6 +3,8 @@ name = "raytracer"
 version = "0.1.0"
 authors = ["Jordan Osborn <jordanosborn0@gmail.com>"]
 edition = "2018"
+license = "MIT"
+description = "Raytracer"
 
 [dependencies]
 rand = "0.6.4"
