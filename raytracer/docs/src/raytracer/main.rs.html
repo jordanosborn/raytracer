@@ -193,6 +193,7 @@
 <span id="193">193</span>
 <span id="194">194</span>
 <span id="195">195</span>
+<span id="196">196</span>
 </pre><pre class="rust ">
 <span class="kw">mod</span> <span class="ident">args</span>;
 <span class="kw">mod</span> <span class="ident">camera</span>;
@@ -216,9 +217,10 @@
 <span class="kw">use</span> <span class="ident">rand</span>::<span class="ident">Rng</span>;
 <span class="kw">use</span> <span class="ident">rayon</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 
+<span class="doccomment">/// Generates a random scene of n-4 tiny spheres spheres 1 large that all others lie on and 3 smaller ones</span>
 <span class="kw">fn</span> <span class="ident">random_scene</span>(<span class="ident">n</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">HitableList</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">list</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">HITABLE</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">n</span> <span class="op">+</span> <span class="number">1</span>);
-    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> (<span class="ident">f64</span>::<span class="ident">from</span>(<span class="number">500</span> <span class="op">-</span> <span class="number">4</span>).<span class="ident">sqrt</span>() <span class="op">/</span> <span class="number">2.0</span>) <span class="kw">as</span> <span class="ident">i32</span>;
+    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> (<span class="ident">f64</span>::<span class="ident">from</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">i32</span> <span class="op">-</span> <span class="number">4</span>).<span class="ident">sqrt</span>() <span class="op">/</span> <span class="number">2.0</span>) <span class="kw">as</span> <span class="ident">i32</span>;
     <span class="ident">list</span>.<span class="ident">push</span>(<span class="ident">HITABLE</span>::<span class="ident">SPHERE</span>(<span class="ident">Sphere</span>::<span class="ident">new</span>(
         <span class="ident">Vec3</span>::<span class="ident">new</span>(<span class="number">0.0</span>, <span class="op">-</span><span class="number">1000.0</span>, <span class="number">0.0</span>),
         <span class="number">1000.0</span>,

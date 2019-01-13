@@ -18,7 +18,7 @@ def commit(cwd: str, cargo: Dict[str, str]):
     print("Formatting code!")
     fmt = sp.check_output(["cargo", "fmt"])
     print("Generating docs!")
-    docs = sp.check_output(["cargo", "doc", "--no-deps"])
+    docs = sp.check_output(["cargo", "doc", "--no-deps", "--document-private-items"])
     copy_tree(doc_dir, doc_dest_dir, update=1)
     try:
         print("Linting code!")
