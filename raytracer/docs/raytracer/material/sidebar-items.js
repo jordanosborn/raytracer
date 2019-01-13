@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["MATERIAL",""]],"mod":[["dielectric",""],["lambertian",""],["metal",""]],"trait":[["Scatter",""]]});
