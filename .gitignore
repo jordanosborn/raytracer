@@ -1,6 +1,4 @@
 .DS_Store
 raytracer/target/
 *.ppm
-
-raytracer/o.png
-raytracer/ousst.png
+raytracer/*.png

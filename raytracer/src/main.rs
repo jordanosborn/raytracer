@@ -97,28 +97,28 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
     let mut rec: HitRecord = HitRecord::new();
     // ignores hits very close to zero
     if world.hit(ray, 0.001, std::f64::MAX, &mut rec) {
-        let mut scattered = Ray::new(&Vec3::new(0.0, 0.0, 0.0), &Vec3::new(0.0, 0.0, 0.0));
-        let mut attenuation = Vec3::new(0.0, 0.0, 0.0);
+        let mut scattered = Ray::new(&Vec3::zeros(), &Vec3::zeros());
+        let mut attenuation = Vec3::zeros();
         match rec.material {
             MATERIAL::Metal(mat) => {
                 if depth < 50 && mat.scatter(ray, &rec, &mut attenuation, &mut scattered) {
                     attenuation * color(&scattered, world, depth + 1u32)
                 } else {
-                    Vec3::new(0.0, 0.0, 0.0)
+                    Vec3::zeros()
                 }
             }
             MATERIAL::Lambertian(mat) => {
                 if depth < 50 && mat.scatter(ray, &rec, &mut attenuation, &mut scattered) {
                     attenuation * color(&scattered, world, depth + 1u32)
                 } else {
-                    Vec3::new(0.0, 0.0, 0.0)
+                    Vec3::zeros()
                 }
             }
             MATERIAL::Dielectric(mat) => {
                 if depth < 50 && mat.scatter(ray, &rec, &mut attenuation, &mut scattered) {
                     attenuation * color(&scattered, world, depth + 1u32)
                 } else {
-                    Vec3::new(0.0, 0.0, 0.0)
+                    Vec3::zeros()
                 }
             }
             MATERIAL::Empty => {
@@ -129,7 +129,7 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
     } else {
         let unit_direction = Vec3::unit_vector(&ray.direction());
         let t = 0.5 * (unit_direction.y() + 1.0);
-        (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0)
+        (1.0 - t) * Vec3::ones() + t * Vec3::new(0.5, 0.7, 1.0)
     }
 }
 
@@ -140,7 +140,7 @@ fn main() {
     let mut buffer = ImageBuffer::new(nx_i, ny_i);
 
     let look_from = Vec3::new(13.0, 2.0, 3.0);
-    let look_at = Vec3::new(0.0, 0.0, 0.0);
+    let look_at = Vec3::zeros();
     let dist_to_focus = (look_from - look_at).length();
     let aperture = 0.1;
 
