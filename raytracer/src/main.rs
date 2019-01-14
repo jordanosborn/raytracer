@@ -1,3 +1,5 @@
+#![feature(test)]
+extern crate test;
 mod args;
 mod camera;
 mod hitable;

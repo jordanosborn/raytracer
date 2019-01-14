@@ -20,6 +20,7 @@ def commit(cwd: str, cargo: Dict[str, str]):
     print("Generating docs!")
     docs = sp.check_output(["cargo", "doc", "--no-deps", "--document-private-items"])
     copy_tree(doc_dir, doc_dest_dir, update=1)
+    bench = sp.check_output(["cargo", "bench"])
     try:
         print("Linting code!")
         lint = sp.check_output(["cargo", "clippy", "--all-features", "--", "-D", "warnings"])
@@ -50,12 +51,8 @@ def lint(cwd: str, cargo: Dict[str, str]):
 def doc(cwd: str, cargo: Dict[str, str]):
     sp.call(["cargo", "doc"] + sys.argv[2:])
 
-def profile(cwd: str, cargo:Dict[str, str]):
-    sp.call(["cargo", "build"])
-    pkg_name = cargo['package']['name']
-    sp.call(["sudo", "dtrace", "-c", f"{cwd}/target/debug/{pkg_name}"] + sys.argv[2:] + 
-    ["-o", "out.stacks", "-n", f'profile-997 /execname == "{pkg_name}"/ {{ @[ustack(100)] = count(); }}'])
-    sp.call([f"{cwd}/stackcollapse.pl", f"{cwd}/out.stacks", "|", f"{cwd}/flamegraph.pl", ">", f"{cwd}/pretty-graph.svg"])
+def bench(cwd: str, cargo:Dict[str, str]):
+    sp.call(["cargo", "bench"] + sys.argv[2:])
 
 if __name__ == "__main__":
     dispatch = {
@@ -66,7 +63,7 @@ if __name__ == "__main__":
         "fmt": fmt,
         "lint": lint,
         "doc": doc,
-        "profile": profile
+        "bench": bench
     }
     cwd = os.getcwd()
     if not os.path.exists(f"{cwd}/Cargo.toml"):
