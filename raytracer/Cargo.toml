@@ -8,6 +8,7 @@ description = "Raytracer"
 
 [profile.dev]
 debug = true
+opt-level = 1
 
 [dependencies]
 rand = "0.6.4"
