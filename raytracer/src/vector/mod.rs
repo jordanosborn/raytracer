@@ -138,6 +138,12 @@ impl Vec3 {
             data: [f(&self.data[0]), f(&self.data[1]), f(&self.data[2])],
         }
     }
+    pub fn all<F>(&self, f: F) -> bool
+    where
+        F: Fn(&f64) -> bool,
+    {
+        f(&self.x()) && f(&self.y()) && f(&self.z())
+    }
 
     pub fn random_in_unit_sphere() -> Vec3 {
         let mut rng = rand::thread_rng();
@@ -366,21 +372,21 @@ mod tests {
         let x = Vec3::new(1.0, 2.0, 3.0);
         let y = Vec3::new(1.0, 2.0, 4.0);
         let z = Vec3::new(2.0, 4.0, 7.0);
-        assert_eq!(x + y, z);
+        assert!((x + y - z).all(|&x| x < std::f64::EPSILON));
     }
     #[test]
     fn test_sub() {
         let x = Vec3::new(1.0, 2.0, 3.0);
         let y = Vec3::new(1.0, 2.0, 4.0);
         let z = Vec3::new(0.0, 0.0, -1.0);
-        assert_eq!(x - y, z);
+        assert!((x - y - z).all(|&x| x < std::f64::EPSILON));
     }
 
     #[test]
     fn test_select() {
         let x = Vec3::new(1.0, 2.0, 3.0);
-        assert_eq!(x[2], x.z());
-        assert_eq!(x[2], x.b());
+        assert!((x[2] - x.z()).abs() < std::f64::EPSILON);
+        assert!((x[2] - x.b()).abs() < std::f64::EPSILON);
     }
 
     #[test]
