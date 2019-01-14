@@ -407,6 +407,6 @@ mod tests {
     }
     #[bench]
     fn bench_unit_sphere(b: &mut Bencher) {
-        b.iter(|| Vec3::random_in_unit_sphere());
+        b.iter(Vec3::random_in_unit_sphere);
     }
 }
