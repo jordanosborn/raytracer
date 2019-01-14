@@ -12,27 +12,26 @@ def commit(cwd: str, cargo: Dict[str, str]):
         ["git", "pull", "--rebase"],
         ["git", "push"]
     ]
-    package_name = cargo["package"]["name"]
     doc_dir = f"{cwd}/target/doc"
     doc_dest_dir = f"{cwd}/docs"
     print("Formatting code!")
-    fmt = sp.check_output(["cargo", "fmt"])
+    sp.check_output(["cargo", "fmt"])
     print("Generating docs!")
-    docs = sp.check_output(["cargo", "doc", "--no-deps", "--document-private-items"])
+    sp.check_output(["cargo", "doc", "--no-deps", "--document-private-items"])
     copy_tree(doc_dir, doc_dest_dir, update=1)
-    bench = sp.check_output(["cargo", "bench"])
+    sp.check_output(["cargo", "bench"])
     try:
         print("Linting code!")
-        lint = sp.check_output(["cargo", "clippy", "--all-features", "--", "-D", "warnings"])
+        sp.check_output(["cargo", "clippy", "--all-features", "--", "-D", "warnings"])
         print("Testing code!")
-        test = sp.check_output(["cargo", "test"])
+        sp.check_output(["cargo", "test"])
     except sp.CalledProcessError:
         print("Failed!")
     else:
         print("Commiting changes!")
         for cmd in gitworkflow:
             sp.call(cmd)
-    
+
 def debug(cwd: str, cargo: Dict[str, str]):
     sp.call(["cargo", "run"] + sys.argv[2:])
 
@@ -84,4 +83,3 @@ if __name__ == "__main__":
             dispatch[sys.argv[1]](cwd, cargo)
         else:
             print("No valid arguments supplied!")
-
