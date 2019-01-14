@@ -10,7 +10,7 @@
             "name": "Debug",
             "cargo": {
                 "args": [
-                    "build",
+                    "build"
                 ]
             },
             "program": "${cargo:program}",
