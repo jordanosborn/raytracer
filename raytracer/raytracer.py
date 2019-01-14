@@ -50,6 +50,13 @@ def lint(cwd: str, cargo: Dict[str, str]):
 def doc(cwd: str, cargo: Dict[str, str]):
     sp.call(["cargo", "doc"] + sys.argv[2:])
 
+def profile(cwd: str, cargo:Dict[str, str]):
+    sp.call(["cargo", "build"])
+    pkg_name = cargo['package']['name']
+    sp.call(["sudo", "dtrace", "-c", f"{cwd}/target/debug/{pkg_name}"] + sys.argv[2:] + 
+    ["-o", "out.stacks", "-n", f'profile-997 /execname == "{pkg_name}"/ {{ @[ustack(100)] = count(); }}'])
+    sp.call([f"{cwd}/stackcollapse.pl", f"{cwd}/out.stacks", "|", f"{cwd}/flamegraph.pl", ">", f"{cwd}/pretty-graph.svg"])
+
 if __name__ == "__main__":
     dispatch = {
         "commit": commit,
@@ -58,7 +65,8 @@ if __name__ == "__main__":
         "test": test,
         "fmt": fmt,
         "lint": lint,
-        "doc": doc
+        "doc": doc,
+        "profile": profile
     }
     cwd = os.getcwd()
     if not os.path.exists(f"{cwd}/Cargo.toml"):
