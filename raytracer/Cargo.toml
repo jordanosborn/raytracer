@@ -6,6 +6,9 @@ edition = "2018"
 license = "MIT"
 description = "Raytracer"
 
+[profile.dev]
+debug = true
+
 [dependencies]
 rand = "0.6.4"
 rayon = "1.0.3"

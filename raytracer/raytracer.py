@@ -20,6 +20,7 @@ def commit(cwd: str, cargo: Dict[str, str]):
     print("Generating docs!")
     docs = sp.check_output(["cargo", "doc", "--no-deps", "--document-private-items"])
     copy_tree(doc_dir, doc_dest_dir, update=1)
+    bench = sp.check_output(["cargo", "bench"])
     try:
         print("Linting code!")
         lint = sp.check_output(["cargo", "clippy", "--all-features", "--", "-D", "warnings"])
@@ -50,6 +51,9 @@ def lint(cwd: str, cargo: Dict[str, str]):
 def doc(cwd: str, cargo: Dict[str, str]):
     sp.call(["cargo", "doc"] + sys.argv[2:])
 
+def bench(cwd: str, cargo:Dict[str, str]):
+    sp.call(["cargo", "bench"] + sys.argv[2:])
+
 if __name__ == "__main__":
     dispatch = {
         "commit": commit,
@@ -58,7 +62,8 @@ if __name__ == "__main__":
         "test": test,
         "fmt": fmt,
         "lint": lint,
-        "doc": doc
+        "doc": doc,
+        "bench": bench
     }
     cwd = os.getcwd()
     if not os.path.exists(f"{cwd}/Cargo.toml"):

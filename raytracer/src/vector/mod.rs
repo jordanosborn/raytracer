@@ -367,6 +367,7 @@ impl std::ops::DivAssign<Vec3> for Vec3 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use test::Bencher;
     #[test]
     fn test_add() {
         let x = Vec3::new(1.0, 2.0, 3.0);
@@ -403,5 +404,9 @@ mod tests {
             let x = Vec3::random_in_unit_sphere();
             assert!(x.length() < 1.0);
         }
+    }
+    #[bench]
+    fn bench_unit_sphere(b: &mut Bencher) {
+        b.iter(|| Vec3::random_in_unit_sphere());
     }
 }

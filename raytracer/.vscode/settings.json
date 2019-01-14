@@ -5,6 +5,7 @@
         "getcwd",
         "hitable",
         "lambertian",
+        "parallelise",
         "powf",
         "rgba",
         "schlick"

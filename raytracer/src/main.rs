@@ -1,3 +1,5 @@
+#![feature(test)]
+extern crate test;
 mod args;
 mod camera;
 mod hitable;
@@ -101,6 +103,7 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
     if world.hit(ray, 0.001, std::f64::MAX, &mut rec) {
         let mut scattered = Ray::new(&Vec3::zeros(), &Vec3::zeros());
         let mut attenuation = Vec3::zeros();
+        //Loop and parallelise this?
         match rec.material {
             MATERIAL::Metal(mat) => {
                 if depth < 50 && mat.scatter(ray, &rec, &mut attenuation, &mut scattered) {
