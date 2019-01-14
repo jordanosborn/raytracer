@@ -2,8 +2,11 @@
 
 import subprocess as sp
 import sys, os
-from typing import Dict
+from typing import Dict, List
 from distutils.dir_util import copy_tree
+
+def check_output(cmds: List[str]):
+    sp.call(cmds)
 
 def commit(cwd: str, cargo: Dict[str, str]):
     gitworkflow = [
@@ -15,43 +18,43 @@ def commit(cwd: str, cargo: Dict[str, str]):
     doc_dir = f"{cwd}/target/doc"
     doc_dest_dir = f"{cwd}/docs"
     print("Formatting code!")
-    sp.check_output(["cargo", "fmt"])
+    check_output(["cargo", "fmt"])
     print("Generating docs!")
-    sp.check_output(["cargo", "doc", "--no-deps", "--document-private-items"])
+    check_output(["cargo", "doc", "--no-deps", "--document-private-items"])
     copy_tree(doc_dir, doc_dest_dir, update=1)
-    sp.check_output(["cargo", "bench"])
+    check_output(["cargo", "bench"])
     try:
         print("Linting code!")
-        sp.check_output(["cargo", "clippy", "--all-features", "--", "-D", "warnings"])
+        check_output(["cargo", "clippy", "--all-features", "--", "-D", "warnings"])
         print("Testing code!")
-        sp.check_output(["cargo", "test"])
+        check_output(["cargo", "test"])
     except sp.CalledProcessError:
         print("Failed!")
     else:
         print("Commiting changes!")
         for cmd in gitworkflow:
-            sp.call(cmd)
+            call(cmd)
 
 def debug(cwd: str, cargo: Dict[str, str]):
-    sp.call(["cargo", "run"] + sys.argv[2:])
+    call(["cargo", "run"] + sys.argv[2:])
 
 def run(cwd: str, cargo: Dict[str, str]):
-    sp.call(["cargo", "run", "--release"] + sys.argv[2:])
+    call(["cargo", "run", "--release"] + sys.argv[2:])
 
 def test(cwd: str, cargo: Dict[str, str]):
-    sp.call(["cargo", "test"] + sys.argv[2:])
+    call(["cargo", "test"] + sys.argv[2:])
 
 def fmt(cwd: str, cargo: Dict[str, str]):
-    sp.call(["cargo", "fmt"] + sys.argv[2:])
+    call(["cargo", "fmt"] + sys.argv[2:])
 
 def lint(cwd: str, cargo: Dict[str, str]):
-    sp.call(["cargo", "clippy"] + sys.argv[2:])
+    call(["cargo", "clippy"] + sys.argv[2:])
 
 def doc(cwd: str, cargo: Dict[str, str]):
-    sp.call(["cargo", "doc"] + sys.argv[2:])
+    call(["cargo", "doc"] + sys.argv[2:])
 
 def bench(cwd: str, cargo:Dict[str, str]):
-    sp.call(["cargo", "bench"] + sys.argv[2:])
+    call(["cargo", "bench"] + sys.argv[2:])
 
 if __name__ == "__main__":
     dispatch = {
