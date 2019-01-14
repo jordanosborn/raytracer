@@ -13,6 +13,6 @@
             },
             "program": "${cargo:program}",
             "args": ["800", "400", "20", "out.png"]
-        },
+        }
     ]
 }
