@@ -1,5 +1,6 @@
 git:
   depth: false
+before_script: cd raytracer
 language: rust
 rust:
   - stable
