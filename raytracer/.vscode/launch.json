@@ -9,9 +9,7 @@
             "request": "launch",
             "name": "Debug",
             "cargo": {
-                "args": [
-                    "build"
-                ]
+                "args": ["build"]
             },
             "program": "${cargo:program}",
             "args": ["800", "400", "20", "out.png"]

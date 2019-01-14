@@ -7,9 +7,7 @@
             "type": "cargo",
             "label": "cargo build",
             "command": "cargo",
-            "args": [
-                "build"
-            ],
+            "args": ["build"],
             "problemMatcher": [
                 "$rustc"
             ]
