@@ -33,28 +33,28 @@ def commit(cwd: str, cargo: Dict[str, str]):
     else:
         print("Commiting changes!")
         for cmd in gitworkflow:
-            call(cmd)
+            sp.call(cmd)
 
 def debug(cwd: str, cargo: Dict[str, str]):
-    call(["cargo", "run"] + sys.argv[2:])
+    sp.call(["cargo", "run"] + sys.argv[2:])
 
 def run(cwd: str, cargo: Dict[str, str]):
-    call(["cargo", "run", "--release"] + sys.argv[2:])
+    sp.call(["cargo", "run", "--release"] + sys.argv[2:])
 
 def test(cwd: str, cargo: Dict[str, str]):
-    call(["cargo", "test"] + sys.argv[2:])
+    sp.call(["cargo", "test"] + sys.argv[2:])
 
 def fmt(cwd: str, cargo: Dict[str, str]):
-    call(["cargo", "fmt"] + sys.argv[2:])
+    sp.call(["cargo", "fmt"] + sys.argv[2:])
 
 def lint(cwd: str, cargo: Dict[str, str]):
-    call(["cargo", "clippy"] + sys.argv[2:])
+    sp.call(["cargo", "clippy"] + sys.argv[2:])
 
 def doc(cwd: str, cargo: Dict[str, str]):
-    call(["cargo", "doc"] + sys.argv[2:])
+    sp.call(["cargo", "doc"] + sys.argv[2:])
 
 def bench(cwd: str, cargo:Dict[str, str]):
-    call(["cargo", "bench"] + sys.argv[2:])
+    sp.call(["cargo", "bench"] + sys.argv[2:])
 
 if __name__ == "__main__":
     dispatch = {
