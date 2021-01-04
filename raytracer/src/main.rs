@@ -220,9 +220,8 @@ fn main() {
     let pb = ProgressBar::new(u64::from(ny_i * nx_i));
     pb.set_style(
         ProgressStyle::default_bar()
-        .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg} [{eta_precise}]")
+        .template("[Elapsed: {elapsed_precise}] [Remaining: {eta}] [{per_sec}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg} {percent}%")
     );
-
 
     let buffer_values = (0..(ny_i)).cartesian_product( (0..nx_i)).collect::<Vec<(u32, u32)>>().par_iter().progress_with(pb).map(|(j, i)| {
         let mut rng = rand::thread_rng();
