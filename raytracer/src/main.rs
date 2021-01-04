@@ -178,6 +178,14 @@ fn main() {
             .takes_value(true)
             .required(true)
         )
+        .arg(Arg::new("number_objects")
+            .short('n')
+            .long("number-objects")
+            .value_name("NUMBER-OBJECTS")
+            .about("Sets number of objects in random scene")
+            .takes_value(true)
+            .required(false)
+        )
         .arg(Arg::new("output_file")
             .short('o')
             .long("output")
@@ -190,6 +198,7 @@ fn main() {
     let nx_i = matches.value_of("pixels_x").unwrap().to_string().parse::<u32>().unwrap();
     let ny_i = matches.value_of("pixels_y").unwrap().to_string().parse::<u32>().unwrap();
     let ns_i = matches.value_of("samples").unwrap().to_string().parse::<u32>().unwrap();
+    let n_objects = matches.value_of("n_objects").unwrap_or("").to_string().parse::<usize>().unwrap_or(500);
     let output = matches.value_of("output_file").unwrap();
 
     let (nx, ny, ns) = (f64::from(nx_i), f64::from(ny_i), f64::from(ns_i));
@@ -215,12 +224,12 @@ fn main() {
         dist_to_focus,
     );
 
-    let world = random_scene(500);
+    let world = random_scene(n_objects);
 
     let pb = ProgressBar::new(u64::from(ny_i * nx_i));
     pb.set_style(
         ProgressStyle::default_bar()
-        .template("[Elapsed: {elapsed_precise}] [Remaining: {eta}] [{per_sec}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg} {percent}%")
+        .template("[Elapsed: {elapsed_precise}] [Remaining: {eta}] [{per_sec}] {wide_bar:.cyan/blue} {pos:>7}/{len:7} {msg} {percent}%")
     );
 
     let buffer_values = (0..(ny_i)).cartesian_product( (0..nx_i)).collect::<Vec<(u32, u32)>>().par_iter().progress_with(pb).map(|(j, i)| {
