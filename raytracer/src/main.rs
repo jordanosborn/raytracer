@@ -193,20 +193,24 @@ fn main() {
     let output = matches.value_of("output_file").unwrap();
 
     let (nx, ny, ns) = (f64::from(nx_i), f64::from(ny_i), f64::from(ns_i));
-    let gamma = 2.0;
-    let mut buffer = ImageBuffer::new(nx_i, ny_i);
 
+    let gamma = 2.0;
     let look_from = Vec3::new(13.0, 2.0, 3.0);
     let look_at = Vec3::zeros();
-    let dist_to_focus = (look_from - look_at).length();
+    
     let aperture = 0.1;
+    let v_up = Vec3::new(0.0, 1.0, 0.0);
+    let fov = 20.0;
+
+    let dist_to_focus = (look_from - look_at).length();
+    let aspect = nx / ny;
 
     let camera = Camera::new(
         look_from,
         look_at,
-        Vec3::new(0.0, 1.0, 0.0),
-        20.0,
-        nx / ny,
+        v_up,
+        fov,
+        aspect,
         aperture,
         dist_to_focus,
     );
@@ -241,6 +245,8 @@ fn main() {
         let ib = (255.99 * col[2]) as u8;
         (*i as u32, (ny_i - j - 1) as u32, image::Rgba([ir, ig, ib, 0xFF]))
     }).collect::<Vec<(u32, u32, image::Rgba<u8>)>>();
+
+    let mut buffer = ImageBuffer::new(nx_i, ny_i);
     for (x, y, rgba) in buffer_values {
         buffer.put_pixel(x, y, rgba);
     }
