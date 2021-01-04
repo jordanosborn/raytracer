@@ -1,5 +1,6 @@
 pub mod hitable_list;
 pub mod sphere;
+pub mod cube;
 use super::material::MATERIAL;
 use super::ray::Ray;
 use super::vector::Vec3;

@@ -6,10 +6,14 @@ mod hitable;
 mod material;
 mod ray;
 mod vector;
+use itertools::Itertools;
+use clap::{Arg, App};
+use indicatif::ParallelProgressIterator;
 use self::camera::Camera;
 use self::hitable::{
     hitable_list::{HitableList, HITABLE},
     sphere::Sphere,
+    cube::Cube,
     HitRecord, Hitable,
 };
 use self::material::{
@@ -18,7 +22,7 @@ use self::material::{
 use self::ray::Ray;
 use self::vector::Vec3;
 use image::ImageBuffer;
-use indicatif::ProgressBar;
+use indicatif::{ProgressBar, ProgressStyle};
 use rand::Rng;
 use rayon::prelude::*;
 
@@ -33,6 +37,13 @@ fn random_scene(n: usize) -> HitableList {
         1000.0,
         MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.5, 0.5, 0.5))),
     )));
+    // list.push(HITABLE::CUBE(Cube::new(
+    //     Vec3::new(200.0, -1000.0, 0.0),
+    //     200.0,
+    //     200.0,
+    //     200.0,
+    //     MATERIAL::Lambertian(Lambertian::new(Vec3::new(0.5, 0.5, 0.5)))
+    // )));
     let mut rng = rand::thread_rng();
     for a in -size..size {
         for b in -size..size {
@@ -139,8 +150,49 @@ fn color(ray: &Ray, world: &HitableList, depth: u32) -> Vec3 {
 }
 
 fn main() {
-    let (nx_i, ny_i, ns, output) = args::parse_args();
-    let (nx, ny) = (f64::from(nx_i), f64::from(ny_i));
+    let matches = App::new("raytracer")
+        .version("0.0.1")
+        .author("Jordan Osborn <jordan@osborn.dev>")
+        // .about("Does awesome things")
+        .arg(Arg::new("pixels_x")
+            .short('x')
+            .long("pixels-x")
+            .value_name("PIXELS-X")
+            .about("Sets width in pixels")
+            .takes_value(true)
+            .required(true)
+        )
+        .arg(Arg::new("pixels_y")
+            .short('y')
+            .long("pixels-y")
+            .value_name("PIXELS-Y")
+            .about("Sets height in pixels")
+            .takes_value(true)
+            .required(true)
+        )
+        .arg(Arg::new("samples")
+            .short('s')
+            .long("samples")
+            .value_name("SAMPLES")
+            .about("Sets number of samples")
+            .takes_value(true)
+            .required(true)
+        )
+        .arg(Arg::new("output_file")
+            .short('o')
+            .long("output")
+            .value_name("OUTPUT")
+            .about("Sets output file path")
+            .takes_value(true)
+            .required(true)
+        )
+        .get_matches();
+    let nx_i = matches.value_of("pixels_x").unwrap().to_string().parse::<u32>().unwrap();
+    let ny_i = matches.value_of("pixels_y").unwrap().to_string().parse::<u32>().unwrap();
+    let ns_i = matches.value_of("samples").unwrap().to_string().parse::<u32>().unwrap();
+    let output = matches.value_of("output_file").unwrap();
+
+    let (nx, ny, ns) = (f64::from(nx_i), f64::from(ny_i), f64::from(ns_i));
     let gamma = 2.0;
     let mut buffer = ImageBuffer::new(nx_i, ny_i);
 
@@ -161,40 +213,37 @@ fn main() {
 
     let world = random_scene(500);
 
-    let pb = ProgressBar::new(u64::from(ny_i));
+    let pb = ProgressBar::new(u64::from(ny_i * nx_i));
+    pb.set_style(
+        ProgressStyle::default_bar()
+        .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg} [{eta_precise}]")
+    );
 
-    (0..(ny_i)).rev().for_each(|j| {
-        let row: Vec<(u32, u32, [u8; 4])> = (0..nx_i)
-            .into_par_iter()
-            .map(|i| {
-                let mut rng = rand::thread_rng();
-                let random_numbers = (0..ns)
-                    .map(|_| (rng.gen::<f64>(), rng.gen::<f64>()))
-                    .collect::<Vec<(f64, f64)>>();
-                let mut col: Vec3 = random_numbers
-                    .par_iter()
-                    .map(|(rand1, rand2)| {
-                        let u = (f64::from(i) + rand1) / nx;
-                        let v = (f64::from(j) as f64 + rand2) / ny;
-                        let r = camera.get_ray(u, v);
-                        color(&r, &world, 0u32)
-                    })
-                    .sum();
-                col /= f64::from(ns);
-                //gamma correction
-                col = col.apply(|&x| f64::powf(x, 1.0 / gamma));
-                let ir = (255.99 * col[0]) as u8;
-                let ig = (255.99 * col[1]) as u8;
-                let ib = (255.99 * col[2]) as u8;
-                (i as u32, (ny_i - j - 1) as u32, [ir, ig, ib, 0xFF])
+
+    let buffer_values = (0..(ny_i)).cartesian_product( (0..nx_i)).collect::<Vec<(u32, u32)>>().par_iter().progress_with(pb).map(|(j, i)| {
+        let mut rng = rand::thread_rng();
+        let random_numbers = (0..ns_i)
+            .map(|_| (rng.gen::<f64>(), rng.gen::<f64>()))
+            .collect::<Vec<(f64, f64)>>();
+        let mut col: Vec3 = random_numbers.par_iter()
+            .map(|(rand1, rand2)| {
+                let u = (f64::from(*i) + rand1) / nx;
+                let v = (f64::from(*j) as f64 + rand2) / ny;
+                let r = camera.get_ray(u, v);
+                color(&r, &world, 0u32)
             })
-            .collect();
-        row.iter()
-            .for_each(|(x, y, rgba)| buffer.put_pixel(*x, *y, image::Rgba(*rgba)));
-
-        pb.inc(1);
-    });
-    pb.finish();
+            .sum();
+        col /= ns;
+        //gamma correction
+        col = col.apply(|&x| f64::powf(x, 1.0 / gamma));
+        let ir = (255.99 * col[0]) as u8;
+        let ig = (255.99 * col[1]) as u8;
+        let ib = (255.99 * col[2]) as u8;
+        (*i as u32, (ny_i - j - 1) as u32, image::Rgba([ir, ig, ib, 0xFF]))
+    }).collect::<Vec<(u32, u32, image::Rgba<u8>)>>();
+    for (x, y, rgba) in buffer_values {
+        buffer.put_pixel(x, y, rgba);
+    }
     println!("Writing file to disk");
     buffer.save(&output).expect("File not saved");
     println!("{} saved", output);

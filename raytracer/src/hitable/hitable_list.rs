@@ -1,9 +1,10 @@
 use super::Ray;
-use super::{sphere::Sphere, HitRecord, Hitable};
+use super::{sphere::Sphere, cube::Cube, HitRecord, Hitable};
 
 #[derive(Copy, Clone)]
 pub enum HITABLE {
     SPHERE(Sphere),
+    CUBE(Cube),
 }
 
 #[derive(Clone)]
@@ -35,7 +36,17 @@ impl Hitable for HitableList {
                         rec.t = temp_rec.t;
                         rec.material = v.material;
                     }
-                }
+                },
+                HITABLE::CUBE(v) => {
+                    if v.hit(r, t_min, closest_so_far, &mut temp_rec) {
+                        hit_anything = true;
+                        closest_so_far = temp_rec.t;
+                        rec.normal = temp_rec.normal;
+                        rec.p = temp_rec.p;
+                        rec.t = temp_rec.t;
+                        rec.material = v.material;
+                    }
+                },
             }
         }
         hit_anything

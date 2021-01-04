@@ -5,3 +5,10 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4b3845c6d8664e7ab663680277619c3a)](https://www.codacy.com/app/jordanosborn/raytracer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jordanosborn/raytracer&amp;utm_campaign=Badge_Grade)
 
 Raytracer written in Rust
+
+## TODO:
+
+1. Get rid of enum for Hitable just use trait
+1. Add clap
+1. Add more shapes
+1. Add scene loading
